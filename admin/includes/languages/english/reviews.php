@@ -44,4 +44,19 @@ define('TEXT_OF_5_STARS', '%s of 5 Stars!');
 define('TEXT_GOOD', '<small><font color="#ff0000"><strong>GOOD</strong></font></small>');
 define('TEXT_BAD', '<small><font color="#ff0000"><strong>BAD</strong></font></small>');
 define('TEXT_INFO_HEADING_DELETE_REVIEW', 'Delete Review');
+
+// admin add reviews
+define('IMAGE_BUTTON_ADD_REVIEW', 'Add A Review');
+
+// admin add testimonials
+define('IMAGE_BUTTON_ADD_TESTIMONIAL', 'Add A Testimonial');
+define('ENTRY_TESTIMONIAL', 'Testimonial:');
+define('ENTRY_NAME', 'Name:');
+
+define('TEXT_IMAGE_NONEXISTENT', 'No Image');
+define('ADMIN_TESTIMONIAL', 'Site Testimonial');
+define('TABLE_HEADING_TESTIMONIAL', 'Testimonial');
+define('IMAGE_ICON_TESTIMONIAL_YES', 'Testimonial');
+define('IMAGE_ICON_TESTIMONIAL_NO', 'Review');
+
 ?>

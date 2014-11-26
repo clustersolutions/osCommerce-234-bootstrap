@@ -109,6 +109,10 @@ CREATE TABLE categories_description (
    categories_id int DEFAULT '0' NOT NULL,
    language_id int DEFAULT '1' NOT NULL,
    categories_name varchar(32) NOT NULL,
+   categories_description TEXT NULL,
+   categories_seo_title VARCHAR( 128 ) NULL,
+   categories_seo_description TEXT NULL,
+   categories_seo_keywords VARCHAR( 128 ) NULL,
    PRIMARY KEY (categories_id, language_id),
    KEY idx_categories_name (categories_name)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
@@ -238,6 +242,7 @@ CREATE TABLE manufacturers (
   manufacturers_image varchar(64),
   date_added datetime NULL,
   last_modified datetime NULL,
+  manufacturers_seo_title VARCHAR( 128 ) NULL,
   PRIMARY KEY (manufacturers_id),
   KEY IDX_MANUFACTURERS_NAME (manufacturers_name)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
@@ -249,6 +254,9 @@ CREATE TABLE manufacturers_info (
   manufacturers_url varchar(255) NOT NULL,
   url_clicked int(5) NOT NULL default '0',
   date_last_click datetime NULL,
+  manufacturers_description TEXT NULL,
+  manufacturers_seo_description TEXT NULL,
+  manufacturers_seo_keywords VARCHAR( 128 ) NULL,
   PRIMARY KEY (manufacturers_id, languages_id)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
@@ -439,8 +447,11 @@ CREATE TABLE products_description (
   products_description text,
   products_url varchar(255) default NULL,
   products_viewed int(5) default '0',
+  products_seo_title VARCHAR( 128 ) NULL,
+  products_seo_description TEXT NULL,
+  products_seo_keywords VARCHAR( 128 ) NULL,
   PRIMARY KEY  (products_id,language_id),
-  KEY products_name (products_name)
+  KEY products_name (products_name),
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 DROP TABLE IF EXISTS products_images;

@@ -23,4 +23,10 @@ define('TEXT_BUY', 'Buy 1 \'');
 define('TEXT_NOW', '\' now');
 define('TEXT_ALL_CATEGORIES', 'All Categories');
 define('TEXT_ALL_MANUFACTURERS', 'All Manufacturers');
+
+if ( ($category_depth == 'top') && (!isset($HTTP_GET_VARS['manufacturers_id'])) ) {
+  define('META_SEO_TITLE', 'Index Page Title');
+  define('META_SEO_DESCRIPTION', 'This is the description of your site to be used in the META Description Element');
+  define('META_SEO_KEYWORDS', 'these, are, the, comma, separated, keywords, used in the META keywords Element');
+}
 ?>

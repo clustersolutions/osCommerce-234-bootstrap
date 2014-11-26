@@ -1393,4 +1393,5 @@
       return str_replace($from, $to, $string);
     }
   }
+
 ?>

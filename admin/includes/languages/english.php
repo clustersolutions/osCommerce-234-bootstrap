@@ -80,6 +80,7 @@ define('BOX_CATALOG_PRODUCTS_EXPECTED', 'Products Expected');
 // customers box text in includes/boxes/customers.php
 define('BOX_HEADING_CUSTOMERS', 'Customers');
 define('BOX_CUSTOMERS_CUSTOMERS', 'Customers');
+define('BOX_CUSTOMERS_ORDERS', 'Orders');
 
 // orders box text in includes/boxes/orders.php
 define('BOX_HEADING_ORDERS', 'Orders');
@@ -298,4 +299,6 @@ define('ERROR_FILE_NOT_SAVED', 'Error: File upload not saved.');
 define('ERROR_FILETYPE_NOT_ALLOWED', 'Error: File upload type not allowed.');
 define('SUCCESS_FILE_SAVED_SUCCESSFULLY', 'Success: File upload saved successfully.');
 define('WARNING_NO_FILE_UPLOADED', 'Warning: No file uploaded.');
+
+define('PLACEHOLDER_COMMA_SEPARATION', 'Must, Be, Comma, Separated');
 ?>

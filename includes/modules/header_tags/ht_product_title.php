@@ -5,7 +5,7 @@
   osCommerce, Open Source E-Commerce Solutions
   http://www.oscommerce.com
 
-  Copyright (c) 2010 osCommerce
+  Copyright (c) 2014 osCommerce
 
   Released under the GNU General Public License
 */
@@ -29,15 +29,27 @@
     }
 
     function execute() {
-      global $PHP_SELF, $oscTemplate, $HTTP_GET_VARS, $languages_id, $product_check;
+      global $PHP_SELF, $oscTemplate, $HTTP_GET_VARS, $languages_id, $product_check, $categories, $current_category_id;
 
       if (basename($PHP_SELF) == FILENAME_PRODUCT_INFO) {
         if (isset($HTTP_GET_VARS['products_id'])) {
           if ($product_check['total'] > 0) {
-            $product_info_query = tep_db_query("select pd.products_name from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_status = '1' and p.products_id = '" . (int)$HTTP_GET_VARS['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
+            $product_info_query = tep_db_query("select pd.products_name, pd.products_seo_title from " . TABLE_PRODUCTS . " p, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_status = '1' and p.products_id = '" . (int)$HTTP_GET_VARS['products_id'] . "' and pd.products_id = p.products_id and pd.language_id = '" . (int)$languages_id . "'");
             $product_info = tep_db_fetch_array($product_info_query);
 
-            $oscTemplate->setTitle($product_info['products_name'] . ', ' . $oscTemplate->getTitle());
+// $categories is set in application_top.php to add the category to the breadcrumb
+            $prod_cat_title = '';
+
+            if (isset($categories) && (sizeof($categories) == 1) && isset($categories['categories_name'])) {
+              $prod_cat_title = MODULE_HEADER_TAGS_PRODUCT_TITLE_CATEGORY_SEPARATOR . $categories['categories_name'];
+            }
+
+            if (tep_not_null($product_info['products_seo_title'])) {
+              $oscTemplate->setTitle($product_info['products_seo_title'] . $prod_cat_title . MODULE_HEADER_TAGS_PRODUCT_TITLE_CATEGORY_SEPARATOR . $oscTemplate->getTitle());
+            }
+            else {
+              $oscTemplate->setTitle($product_info['products_name'] . $prod_cat_title . MODULE_HEADER_TAGS_PRODUCT_TITLE_CATEGORY_SEPARATOR . $oscTemplate->getTitle());
+            }
           }
         }
       }
@@ -54,6 +66,7 @@
     function install() {
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Product Title Module', 'MODULE_HEADER_TAGS_PRODUCT_TITLE_STATUS', 'True', 'Do you want to allow product titles to be added to the page title?', '6', '1', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now())");
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_HEADER_TAGS_PRODUCT_TITLE_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '0', now())");
+      tep_db_query( "insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Separator', 'MODULE_HEADER_TAGS_PRODUCT_TITLE_CATEGORY_SEPARATOR', '-', 'The separator to put between this element and the following element.', '6', '2', now())" );
     }
 
     function remove() {
@@ -61,7 +74,7 @@
     }
 
     function keys() {
-      return array('MODULE_HEADER_TAGS_PRODUCT_TITLE_STATUS', 'MODULE_HEADER_TAGS_PRODUCT_TITLE_SORT_ORDER');
+      return array('MODULE_HEADER_TAGS_PRODUCT_TITLE_STATUS', 'MODULE_HEADER_TAGS_PRODUCT_TITLE_SORT_ORDER', 'MODULE_HEADER_TAGS_PRODUCT_TITLE_CATEGORY_SEPARATOR');
     }
   }
 ?>
