@@ -36,3 +36,37 @@
 
 # php_value session.use_trans_sid 0
 # php_value register_globals 1
+# If you are getting errors you may need to comment this out like ..
+# Options +FollowSymLinks
+Options +SymLinksIfOwnerMatch
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # RewriteBase instructions
+  # Change RewriteBase dependent on how your shop is accessed as below.
+  # http://www.mysite.com = RewriteBase /
+  # http://www.mysite.com/catalog/ = RewriteBase /catalog/ 
+  # http://www.mysite.com/catalog/shop/ = RewriteBase /catalog/shop/
+
+  # Change RewriteBase using the instructions above  
+  RewriteBase /23resp/ 
+  RewriteRule ^([a-z0-9/-]+)-p-([0-9]+).html$ product_info.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-c-([0-9_]+).html$ index.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-m-([0-9]+).html$ index.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-pi-([0-9]+).html$ popup_image.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-pr-([0-9]+).html$ product_reviews.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-pri-([0-9]+).html$ product_reviews_info.php [NC,L,QSA]
+  # Articles contribution
+  RewriteRule ^([a-z0-9/-]+)-t-([0-9_]+).html$ articles.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-au-([0-9]+).html$ articles.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-a-([0-9]+).html$ article_info.php [NC,L,QSA]
+  # Information pages
+  RewriteRule ^([a-z0-9/-]+)-i-([0-9]+).html$ information.php [NC,L,QSA]
+  # Links contribution
+  RewriteRule ^([a-z0-9/-]+)-links-([0-9_]+).html$ links.php [NC,L,QSA]
+  # Newsdesk contribution
+  RewriteRule ^([a-z0-9/-]+)-n-([0-9]+).html$ newsdesk_info.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-nc-([0-9]+).html$ newsdesk_index.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-nri-([0-9]+).html$ newsdesk_reviews_info.php [NC,L,QSA]
+  RewriteRule ^([a-z0-9/-]+)-nra-([0-9]+).html$ newsdesk_reviews_article.php [NC,L,QSA]
+</IfModule>

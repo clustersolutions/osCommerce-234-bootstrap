@@ -149,7 +149,7 @@ $prod_list_contents .= '<div id="product-listing">';
       
       $prod_list_contents .= '      </div> <!--pricewrap-->';
       
-      $prod_list_contents .= '      <div class="btn-wrap">' . tep_draw_button(IMAGE_BUTTON_BUY_NOW, 'cart', tep_href_link(basename($PHP_SELF), tep_get_all_get_params(array('action')) . 'action=buy_now&products_id=' . $listing['products_id']), NULL, NULL, 'btn-success btn-sm');
+      $prod_list_contents .= '      <div class="btn-wrap">' . tep_draw_button(IMAGE_BUTTON_BUY_NOW, 'cart', tep_href_link(basename($PHP_SELF), tep_get_all_get_params(array('action', 'products_id')) . 'action=buy_now&products_id=' . $listing['products_id']), NULL, NULL, 'btn-success btn-sm');
       $prod_list_contents .= '      </div><!--btn-wrap-->';
 
 	  $prod_list_contents .= '      <ul class="optional-wrap">';

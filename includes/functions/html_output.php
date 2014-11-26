@@ -10,6 +10,7 @@
   Released under the GNU General Public License
 */
 
+/*
 ////
 // The HTML href link wrapper function
   function tep_href_link($page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true) {
@@ -69,6 +70,17 @@
     }
 
     return $link;
+  }
+*/
+
+  /**
+  * ULTIMATE Seo Urls 5 PRO by FWR Media
+  * Replacement for osCommerce href link wrapper function
+  */
+  require_once DIR_WS_MODULES . 'ultimate_seo_urls5/main/usu5.php';
+  
+  function tep_href_link( $page = '', $parameters = '', $connection = 'NONSSL', $add_session_id = true, $search_engine_safe = true ) {
+    return Usu_Main::i()->hrefLink( $page, $parameters, $connection, $add_session_id, $search_engine_safe );
   }
 
 ////

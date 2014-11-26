@@ -18,6 +18,12 @@
   $action = (isset($HTTP_GET_VARS['action']) ? $HTTP_GET_VARS['action'] : '');
 
   if (tep_not_null($action)) {
+    // ULTIMATE Seo Urls 5 PRO by FWR Media
+    // If the action will affect the cache entries
+    if ( $action == 'insert' || $action == 'update' || $action == 'setflag' ) {
+      tep_reset_cache_data_usu5( 'reset' );
+    }
+
     switch ($action) {
       case 'setflag':
         if ( ($HTTP_GET_VARS['flag'] == '0') || ($HTTP_GET_VARS['flag'] == '1') ) {

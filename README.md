@@ -8,7 +8,7 @@ HG === Holy Grail (Ok my "holy grail" but I've been in the online retail trenche
 Mods Installed (mods are like building blocks, you can help by adding one):
 
 1. SEO_Header_Tag.
-2. Coming soon...
-3. 
+2. Ultimate SEO URLs5 (cache using MySQL causes error...TBD).
+3. Coming soon...move contact number to address book table.
 
 

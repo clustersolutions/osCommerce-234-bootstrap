@@ -29,7 +29,7 @@
    exit();
   }
 
-////
+/*///
 // Redirect to another page or site
   function tep_redirect($url) {
     if ( (strstr($url, "\n") != false) || (strstr($url, "\r") != false) ) { 
@@ -49,6 +49,30 @@
     header('Location: ' . $url);
 
     tep_exit();
+  }
+*/
+
+  /**
+  * ULTIMATE Seo Urls 5 PRO by FWR Media
+  * Redirect to another page or site
+  */
+  function tep_redirect($url) {
+    if ( (strstr($url, "\n") != false) || (strstr($url, "\r") != false) ) { 
+      tep_redirect(tep_href_link(FILENAME_DEFAULT, '', 'NONSSL', false));
+    }
+
+    if ( (ENABLE_SSL == true) && (getenv('HTTPS') == 'on') ) { // We are loading an SSL page
+      if (substr($url, 0, strlen(HTTP_SERVER . DIR_WS_HTTP_CATALOG)) == HTTP_SERVER . DIR_WS_HTTP_CATALOG) { // NONSSL url
+        $url = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . substr($url, strlen(HTTP_SERVER . DIR_WS_HTTP_CATALOG)); // Change it to SSL
+      }
+    }
+    if ( false !== strpos($url, '&amp;') ){
+      $url = str_replace('&amp;', '&', $url);
+    }
+ //   session_write_close();
+    header('Location: ' . $url);
+
+    tep_exit(); // exit;
   }
 
 ////
