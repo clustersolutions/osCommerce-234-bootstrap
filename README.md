@@ -11,3 +11,4 @@ Mods Installed (mods are like building blocks, you can help by adding one):
 2. Ultimate SEO URLs5 (cache using MySQL causes error...TBD).
 3. Moved contact numbers from customers table to address_book table. A useful feature to have when you have any order with different customer, billing, and ship to addressees so you can contact them for security verification. 
 4. Added simple registration module to login to make it easier for customers to sign up.
+
