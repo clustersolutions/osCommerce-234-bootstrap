@@ -50,7 +50,7 @@
       <div class="form-group has-feedback">
         <label for="inputFirstName" class="control-label col-xs-3"><?php echo ENTRY_FIRST_NAME; ?></label>
         <div class="col-xs-9">
-          <?php echo tep_draw_input_field('firstname', (isset($entry['entry_firstname']) ? $entry['entry_firstname'] : ''), 'required aria-required="true" id="inputFirstName" placeholder="' . ENTRY_FIRST_NAME . '"'); ?>
+          <?php echo tep_draw_input_field('firstname', (tep_not_null($customer_first_name) ? $customer_first_name : (isset($entry['entry_firstname']) ? $entry['entry_firstname'] : '')), 'required aria-required="true" id="inputFirstName" placeholder="' . ENTRY_FIRST_NAME . '"'); ?>
           <?php echo FORM_REQUIRED_INPUT; ?>
           <?php if (tep_not_null(ENTRY_FIRST_NAME_TEXT)) echo '<span class="help-block">' . ENTRY_FIRST_NAME_TEXT . '</span>'; ?>
         </div>
@@ -58,7 +58,7 @@
       <div class="form-group has-feedback">
         <label for="inputLastName" class="control-label col-xs-3"><?php echo ENTRY_LAST_NAME; ?></label>
         <div class="col-xs-9">
-          <?php echo tep_draw_input_field('lastname', (isset($entry['entry_lastname']) ? $entry['entry_lastname'] : ''), 'required aria-required="true" id="inputLastName" placeholder="' . ENTRY_LAST_NAME . '"'); ?>
+          <?php echo tep_draw_input_field('lastname', (tep_not_null($customer_last_name) ? $customer_last_name : (isset($entry['entry_lastname']) ? $entry['entry_lastname'] : '')), 'required aria-required="true" id="inputLastName" placeholder="' . ENTRY_LAST_NAME . '"'); ?>
           <?php echo FORM_REQUIRED_INPUT; ?>
           <?php if (tep_not_null(ENTRY_LAST_NAME_TEXT)) echo '<span class="help-block">' . ENTRY_LAST_NAME_TEXT . '</span>'; ?>
         </div>
@@ -174,8 +174,29 @@
         </div>
       </div>
 
+      <div class="form-group has-feedback">
+        <label for="inputTelephone" class="control-label col-xs-3"><?php echo ENTRY_TELEPHONE_NUMBER; ?></label>
+        <div class="col-xs-9">
+          <?php
+          echo tep_draw_input_field('telephone', (isset($entry['entry_telephone']) ? $entry['entry_telephone'] : ''), 'required aria-required="true" id="inputTelephone" placeholder="' . ENTRY_TELEPHONE_NUMBER . '"');
+          echo FORM_REQUIRED_INPUT;
+          if (tep_not_null(ENTRY_TELEPHONE_NUMBER_TEXT)) echo '<span class="help-block">' . ENTRY_TELEPHONE_NUMBER_TEXT . '</span>';
+          ?>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputFax" class="control-label col-xs-3"><?php echo ENTRY_FAX_NUMBER; ?></label>
+        <div class="col-xs-9">
+          <?php
+          echo tep_draw_input_field('fax', (isset($entry['entry_fax']) ? $entry['entry_fax'] : ''), 'id="inputFax" placeholder="' . ENTRY_FAX_NUMBER . '"');
+          if (tep_not_null(ENTRY_FAX_NUMBER_TEXT)) echo '<span class="help-block">' . ENTRY_FAX_NUMBER_TEXT . '</span>';
+          ?>
+        </div>
+      </div>
+
 <?php
   if ((isset($HTTP_GET_VARS['edit']) && ($customer_default_address_id != $HTTP_GET_VARS['edit'])) || (isset($HTTP_GET_VARS['edit']) == false) ) {
+    if (tep_default_entry_country_id($customer_default_address_id) != 0) {
 ?>
 
       <div class="form-group">
@@ -195,6 +216,7 @@
       </div>
 
 <?php
+    }
   }
 ?>
   </div>

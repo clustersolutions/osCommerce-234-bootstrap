@@ -703,7 +703,7 @@ function check_form() {
         $reviews_query = tep_db_query("select count(*) as number_of_reviews from " . TABLE_REVIEWS . " where customers_id = '" . (int)$customers['customers_id'] . "'");
         $reviews = tep_db_fetch_array($reviews_query);
 
-        $customer_info = array_merge($country, $info, $reviews);
+        (tep_db_num_rows($country_query) > 0 ? $customer_info = array_merge($country, $info, $reviews) : $customer_info = array_merge($info, $reviews));
 
         $cInfo_array = array_merge($customers, $customer_info);
         $cInfo = new objectInfo($cInfo_array);

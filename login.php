@@ -33,7 +33,7 @@
       tep_session_recreate();
     }
 
-    $customer_info_query = tep_db_query("select c.customers_firstname, c.customers_default_address_id, ab.entry_country_id, ab.entry_zone_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " ab on (c.customers_id = ab.customers_id and c.customers_default_address_id = ab.address_book_id) where c.customers_id = '" . (int)$login_customer_id . "'");
+    $customer_info_query = tep_db_query("select c.customers_firstname, c.customers_lastname, c.customers_default_address_id, ab.entry_country_id, ab.entry_zone_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " ab on (c.customers_id = ab.customers_id and c.customers_default_address_id = ab.address_book_id) where c.customers_id = '" . (int)$login_customer_id . "'");
     $customer_info = tep_db_fetch_array($customer_info_query);
 
     $customer_id = $login_customer_id;
@@ -44,6 +44,9 @@
 
     $customer_first_name = $customer_info['customers_firstname'];
     tep_session_register('customer_first_name');
+
+    $customer_last_name = $customer_info['customers_lastname'];
+    tep_session_register('customer_last_name');
 
     $customer_country_id = $customer_info['entry_country_id'];
     tep_session_register('customer_country_id');

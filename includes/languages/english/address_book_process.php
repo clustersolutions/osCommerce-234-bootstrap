@@ -20,6 +20,7 @@ define('NAVBAR_TITLE_DELETE_ENTRY', 'Delete Entry');
 define('HEADING_TITLE_ADD_ENTRY', 'New Address Book Entry');
 define('HEADING_TITLE_MODIFY_ENTRY', 'Update Address Book Entry');
 define('HEADING_TITLE_DELETE_ENTRY', 'Delete Address Book Entry');
+define('HEADING_TITLE_SHIP_TO_ENTRY', 'Ship To Address');
 
 define('DELETE_ADDRESS_TITLE', 'Delete Address');
 define('DELETE_ADDRESS_DESCRIPTION', 'Are you sure you would like to delete the selected address from your address book?');
@@ -36,4 +37,6 @@ define('WARNING_PRIMARY_ADDRESS_DELETION', 'The primary address cannot be delete
 
 define('ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY', 'The address book entry does not exist.');
 define('ERROR_ADDRESS_BOOK_FULL', 'Your address book is full. Please delete an unneeded address to save a new one.');
+
+define('NAVBAR_TITLE_SHIP_TO_ENTRY', 'Ship To Address');
 ?>

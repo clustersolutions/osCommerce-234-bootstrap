@@ -159,7 +159,7 @@ function rowOutEffect(object) {
       <div class="panel panel-primary">
         <div class="panel-heading"><?php echo TITLE_BILLING_ADDRESS; ?></div>
         <div class="panel-body">
-          <?php echo tep_address_label($customer_id, $billto, true, ' ', '<br />'); ?>
+          <?php echo tep_address_phone_label($customer_id, $billto, true, ' ', '<br />'); ?>
         </div>
       </div>
     </div>

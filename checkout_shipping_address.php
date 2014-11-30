@@ -55,6 +55,8 @@
       $postcode = tep_db_prepare_input($HTTP_POST_VARS['postcode']);
       $city = tep_db_prepare_input($HTTP_POST_VARS['city']);
       $country = tep_db_prepare_input($HTTP_POST_VARS['country']);
+      $telephone = tep_db_prepare_input($HTTP_POST_VARS['telephone']);
+      $fax = tep_db_prepare_input($HTTP_POST_VARS['fax']);
       if (ACCOUNT_STATE == 'true') {
         if (isset($HTTP_POST_VARS['zone_id'])) {
           $zone_id = tep_db_prepare_input($HTTP_POST_VARS['zone_id']);
@@ -132,6 +134,12 @@
         $messageStack->add('checkout_address', ENTRY_COUNTRY_ERROR);
       }
 
+      if (strlen($telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
+        $error = true;
+ 
+        $messageStack->add('checkout_address', ENTRY_TELEPHONE_NUMBER_ERROR);
+      }
+
       if ($error == false) {
         $sql_data_array = array('customers_id' => $customer_id,
                                 'entry_firstname' => $firstname,
@@ -139,7 +147,9 @@
                                 'entry_street_address' => $street_address,
                                 'entry_postcode' => $postcode,
                                 'entry_city' => $city,
-                                'entry_country_id' => $country);
+                                'entry_country_id' => $country,
+                                'entry_telephone' => $telephone,
+                                'entry_fax' => $fax);
 
         if (ACCOUNT_GENDER == 'true') $sql_data_array['entry_gender'] = $gender;
         if (ACCOUNT_COMPANY == 'true') $sql_data_array['entry_company'] = $company;
@@ -286,7 +296,7 @@ function check_form_optional(form_name) {
         <div class="panel-heading"><?php echo TITLE_SHIPPING_ADDRESS; ?></div>
 
         <div class="panel-body">
-          <?php echo tep_address_label($customer_id, $sendto, true, ' ', '<br />'); ?>
+          <?php echo tep_address_phone_label($customer_id, $sendto, true, ' ', '<br />'); ?>
         </div>
       </div>
     </div>
@@ -307,7 +317,8 @@ function check_form_optional(form_name) {
 <?php
       $radio_buttons = 0;
 
-      $addresses_query = tep_db_query("select address_book_id, entry_firstname as firstname, entry_lastname as lastname, entry_company as company, entry_street_address as street_address, entry_suburb as suburb, entry_city as city, entry_postcode as postcode, entry_state as state, entry_zone_id as zone_id, entry_country_id as country_id from " . TABLE_ADDRESS_BOOK . " where customers_id = '" . (int)$customer_id . "'");
+      $addresses_query = tep_db_query("select address_book_id, entry_firstname as firstname, entry_lastname as lastname, entry_company as company, entry_street_address as street_address, entry_suburb as suburb, entry_city as city, entry_postcode as postcode, entry_state as state, entry_zone_id as zone_id, entry_country_id as country_id, entry_telephone as telephone, entry_fax as fax from " . TABLE_ADDRESS_BOOK . " where customers_id = '" . (int)$customer_id . "'");
+
       while ($addresses = tep_db_fetch_array($addresses_query)) {
         $format_id = tep_get_address_format_id($addresses['country_id']);
 ?>

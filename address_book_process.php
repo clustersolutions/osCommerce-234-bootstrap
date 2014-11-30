@@ -47,6 +47,8 @@
     $postcode = tep_db_prepare_input($HTTP_POST_VARS['postcode']);
     $city = tep_db_prepare_input($HTTP_POST_VARS['city']);
     $country = tep_db_prepare_input($HTTP_POST_VARS['country']);
+    $telephone = tep_db_prepare_input($HTTP_POST_VARS['telephone']);
+    $fax = tep_db_prepare_input($HTTP_POST_VARS['fax']);
     if (ACCOUNT_STATE == 'true') {
       if (isset($HTTP_POST_VARS['zone_id'])) {
         $zone_id = tep_db_prepare_input($HTTP_POST_VARS['zone_id']);
@@ -124,13 +126,22 @@
       }
     }
 
+    if (strlen($telephone) < ENTRY_TELEPHONE_MIN_LENGTH) {
+      $error = true;
+
+      $messageStack->add('addressbook', ENTRY_TELEPHONE_NUMBER_ERROR);
+    }
+
     if ($error == false) {
       $sql_data_array = array('entry_firstname' => $firstname,
                               'entry_lastname' => $lastname,
                               'entry_street_address' => $street_address,
                               'entry_postcode' => $postcode,
                               'entry_city' => $city,
-                              'entry_country_id' => (int)$country);
+                              'entry_country_id' => (int)$country,
+                              'entry_telephone' => $telephone,
+                              'entry_fax' => $fax);
+
 
       if (ACCOUNT_GENDER == 'true') $sql_data_array['entry_gender'] = $gender;
       if (ACCOUNT_COMPANY == 'true') $sql_data_array['entry_company'] = $company;
@@ -153,6 +164,7 @@
 // reregister session variables
           if ( (isset($HTTP_POST_VARS['primary']) && ($HTTP_POST_VARS['primary'] == 'on')) || ($HTTP_GET_VARS['edit'] == $customer_default_address_id) ) {
             $customer_first_name = $firstname;
+            $customer_last_name = $lastname;
             $customer_country_id = $country;
             $customer_zone_id = (($zone_id > 0) ? (int)$zone_id : '0');
             $customer_default_address_id = (int)$HTTP_GET_VARS['edit'];
@@ -168,6 +180,13 @@
 
           $messageStack->add_session('addressbook', SUCCESS_ADDRESS_BOOK_ENTRY_UPDATED, 'success');
         }
+
+      } elseif (tep_default_entry_country_id($customer_default_address_id) == 0) {
+
+        tep_db_perform(TABLE_ADDRESS_BOOK, $sql_data_array, 'update', "address_book_id = '" . (int)$customer_default_address_id . "'");
+
+        tep_redirect(tep_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+
       } else {
         if (tep_count_customer_address_book_entries() < MAX_ADDRESS_BOOK_ENTRIES) {
           $sql_data_array['customers_id'] = (int)$customer_id;
@@ -178,6 +197,7 @@
 // reregister session variables
           if (isset($HTTP_POST_VARS['primary']) && ($HTTP_POST_VARS['primary'] == 'on')) {
             $customer_first_name = $firstname;
+            $customer_last_name = $lastname;
             $customer_country_id = $country;
             $customer_zone_id = (($zone_id > 0) ? (int)$zone_id : '0');
             if (isset($HTTP_POST_VARS['primary']) && ($HTTP_POST_VARS['primary'] == 'on')) $customer_default_address_id = $new_address_book_id;
@@ -200,7 +220,7 @@
   }
 
   if (isset($HTTP_GET_VARS['edit']) && is_numeric($HTTP_GET_VARS['edit'])) {
-    $entry_query = tep_db_query("select entry_gender, entry_company, entry_firstname, entry_lastname, entry_street_address, entry_suburb, entry_postcode, entry_city, entry_state, entry_zone_id, entry_country_id from " . TABLE_ADDRESS_BOOK . " where customers_id = '" . (int)$customer_id . "' and address_book_id = '" . (int)$HTTP_GET_VARS['edit'] . "'");
+    $entry_query = tep_db_query("select entry_gender, entry_company, entry_firstname, entry_lastname, entry_street_address, entry_suburb, entry_postcode, entry_city, entry_state, entry_zone_id, entry_country_id, entry_telephone, entry_fax from " . TABLE_ADDRESS_BOOK . " where customers_id = '" . (int)$customer_id . "' and address_book_id = '" . (int)$HTTP_GET_VARS['edit'] . "'");
 
     if (!tep_db_num_rows($entry_query)) {
       $messageStack->add_session('addressbook', ERROR_NONEXISTING_ADDRESS_BOOK_ENTRY);
@@ -241,6 +261,8 @@
 
   if (isset($HTTP_GET_VARS['edit']) && is_numeric($HTTP_GET_VARS['edit'])) {
     $breadcrumb->add(NAVBAR_TITLE_MODIFY_ENTRY, tep_href_link(FILENAME_ADDRESS_BOOK_PROCESS, 'edit=' . $HTTP_GET_VARS['edit'], 'SSL'));
+  } elseif (tep_default_entry_country_id($customer_default_address_id) == 0) {
+    $breadcrumb->add(NAVBAR_TITLE_SHIP_TO_ENTRY, tep_href_link(FILENAME_ADDRESS_BOOK_PROCESS, '', 'SSL'));
   } elseif (isset($HTTP_GET_VARS['delete']) && is_numeric($HTTP_GET_VARS['delete'])) {
     $breadcrumb->add(NAVBAR_TITLE_DELETE_ENTRY, tep_href_link(FILENAME_ADDRESS_BOOK_PROCESS, 'delete=' . $HTTP_GET_VARS['delete'], 'SSL'));
   } else {
@@ -255,7 +277,7 @@
 ?>
 
 <div class="page-header">
-  <h1><?php if (isset($HTTP_GET_VARS['edit'])) { echo HEADING_TITLE_MODIFY_ENTRY; } elseif (isset($HTTP_GET_VARS['delete'])) { echo HEADING_TITLE_DELETE_ENTRY; } else { echo HEADING_TITLE_ADD_ENTRY; } ?></h1>
+  <h1><?php if (isset($HTTP_GET_VARS['edit'])) { echo HEADING_TITLE_MODIFY_ENTRY; } elseif (tep_default_entry_country_id($customer_default_address_id) == 0) { echo HEADING_TITLE_SHIP_TO_ENTRY; } elseif (isset($HTTP_GET_VARS['delete'])) { echo HEADING_TITLE_DELETE_ENTRY; } else { echo HEADING_TITLE_ADD_ENTRY; } ?></h1>
 </div>
 
 <?php
@@ -279,7 +301,7 @@
         <div class="panel-heading"><?php echo DELETE_ADDRESS_TITLE; ?></div>
 
         <div class="panel-body">
-          <?php echo tep_address_label($customer_id, (int)$HTTP_GET_VARS['delete'], true, ' ', '<br />'); ?>
+          <?php echo tep_address_phone_label($customer_id, $HTTP_GET_VARS['delete'], true, ' ', '<br />'); ?>
         </div>
       </div>
     </div>
@@ -317,6 +339,8 @@
     } else {
       if (sizeof($navigation->snapshot) > 0) {
         $back_link = tep_href_link($navigation->snapshot['page'], tep_array_to_string($navigation->snapshot['get'], array(tep_session_name())), $navigation->snapshot['mode']);
+      } elseif (tep_default_entry_country_id($customer_default_address_id) == 0 ) {
+        $back_link = tep_href_link(FILENAME_SHOPPING_CART);
       } else {
         $back_link = tep_href_link(FILENAME_ADDRESS_BOOK, '', 'SSL');
       }

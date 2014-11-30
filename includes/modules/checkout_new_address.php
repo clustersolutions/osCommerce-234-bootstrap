@@ -167,4 +167,23 @@
         ?>
       </div>
     </div>
+      <div class="form-group has-feedback">
+        <label for="inputTelephone" class="control-label col-xs-3"><?php echo ENTRY_TELEPHONE_NUMBER; ?></label>
+        <div class="col-xs-9">
+          <?php
+          echo tep_draw_input_field('telephone', NULL, 'id="inputTelephone" placeholder="' . ENTRY_TELEPHONE_NUMBER . '"');
+          echo FORM_REQUIRED_INPUT;
+          if (tep_not_null(ENTRY_TELEPHONE_NUMBER_TEXT)) echo '<span class="help-block">' . ENTRY_TELEPHONE_NUMBER_TEXT . '</span>';
+          ?>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputFax" class="control-label col-xs-3"><?php echo ENTRY_FAX_NUMBER; ?></label>
+        <div class="col-xs-9">
+          <?php
+          echo tep_draw_input_field('fax', NULL, 'id="inputFax" placeholder="' . ENTRY_FAX_NUMBER . '"');
+          if (tep_not_null(ENTRY_FAX_NUMBER_TEXT)) echo '<span class="help-block">' . ENTRY_FAX_NUMBER_TEXT . '</span>';
+          ?>
+        </div>
+      </div>
 </div>

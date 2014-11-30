@@ -126,6 +126,10 @@
                 <td class="main"><?php echo $order->customer['telephone']; ?></td>
               </tr>
               <tr>
+                <td class="main"><strong><?php echo ENTRY_FAX_NUMBER; ?></strong></td>
+                <td class="main"><?php echo $order->customer['fax']; ?></td>
+              </tr>
+              <tr>
                 <td class="main"><strong><?php echo ENTRY_EMAIL_ADDRESS; ?></strong></td>
                 <td class="main"><?php echo '<a href="mailto:' . $order->customer['email_address'] . '"><u>' . $order->customer['email_address'] . '</u></a>'; ?></td>
               </tr>
@@ -135,11 +139,27 @@
                 <td class="main" valign="top"><strong><?php echo ENTRY_SHIPPING_ADDRESS; ?></strong></td>
                 <td class="main"><?php echo tep_address_format($order->delivery['format_id'], $order->delivery, 1, '', '<br />'); ?></td>
               </tr>
+              <tr>
+                <td class="main"><strong><?php echo ENTRY_TELEPHONE_NUMBER; ?></strong></td>
+                <td class="main"><?php echo $order->delivery['telephone']; ?></td>
+              </tr>
+              <tr>
+                <td class="main"><strong><?php echo ENTRY_FAX_NUMBER; ?></strong></td>
+                <td class="main"><?php echo $order->delivery['fax']; ?></td>
+              </tr>
             </table></td>
             <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
               <tr>
                 <td class="main" valign="top"><strong><?php echo ENTRY_BILLING_ADDRESS; ?></strong></td>
                 <td class="main"><?php echo tep_address_format($order->billing['format_id'], $order->billing, 1, '', '<br />'); ?></td>
+              </tr>
+              <tr>
+                <td class="main"><strong><?php echo ENTRY_TELEPHONE_NUMBER; ?></strong></td>
+                <td class="main"><?php echo $order->billing['telephone']; ?></td>
+              </tr>
+              <tr>
+                <td class="main"><strong><?php echo ENTRY_FAX_NUMBER; ?></strong></td>
+                <td class="main"><?php echo $order->billing['fax']; ?></td>
               </tr>
             </table></td>
           </tr>

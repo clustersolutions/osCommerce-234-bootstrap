@@ -24,6 +24,11 @@
     tep_redirect(tep_href_link(FILENAME_SHOPPING_CART));
   }
 
+// if default_address_id is null redirect to address_book_process ttl 121513
+  if (tep_default_entry_country_id($customer_default_address_id) == 0) {
+    tep_redirect(tep_href_link(FILENAME_ADDRESS_BOOK_PROCESS, '', 'SSL'));
+  }
+
 // if no shipping destination address was selected, use the customers own address as default
   if (!tep_session_is_registered('sendto')) {
     tep_session_register('sendto');
@@ -192,7 +197,7 @@
       <div class="panel panel-primary">
         <div class="panel-heading"><?php echo TITLE_SHIPPING_ADDRESS; ?></div>
         <div class="panel-body">
-          <?php echo tep_address_label($customer_id, $sendto, true, ' ', '<br />'); ?>
+          <?php echo tep_address_phone_label($customer_id, $sendto, true, ' ', '<br />'); ?>
         </div>
       </div>
     </div>

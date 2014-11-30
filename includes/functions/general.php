@@ -472,7 +472,7 @@
 ////
 // Return a formatted address
 // TABLES: address_format
-  function tep_address_format($address_format_id, $address, $html, $boln, $eoln) {
+  function tep_address_format($address_format_id, $address, $html, $boln, $eoln, $phone_no = true) {
     $address_format_query = tep_db_query("select address_format as format from " . TABLE_ADDRESS_FORMAT . " where address_format_id = '" . (int)$address_format_id . "'");
     $address_format = tep_db_fetch_array($address_format_query);
 
@@ -504,6 +504,9 @@
     }
     $postcode = tep_output_string_protected($address['postcode']);
     $zip = $postcode;
+    (isset($address['telephone']) ? $telephone =  tep_output_string_protected($address['telephone']) : $telephone = null );
+    (isset($address['fax']) ? $fax =  tep_output_string_protected($address['fax']) : $fax = null );
+
 
     if ($html) {
 // HTML Mode
@@ -535,6 +538,11 @@
 
     if ( (ACCOUNT_COMPANY == 'true') && (tep_not_null($company)) ) {
       $address = $company . $cr . $address;
+    }
+
+    if ($phone_no) {
+      ((tep_not_null($telephone)) ? $address .=  $cr . 'p. ' . $telephone : $address = $address );
+      ((tep_not_null($fax)) ? $address .=  $cr . 'c. ' . $fax : $address = $address );
     }
 
     return $address;
@@ -1416,6 +1424,29 @@
     } else {
       return str_replace($from, $to, $string);
     }
+  }
+
+// added for no address cluster solutions 12-15-13
+  function tep_default_entry_country_id($customer_default_address_id) {
+    $default_address_query = tep_db_query("select entry_country_id from " . TABLE_ADDRESS_BOOK . " where address_book_id = '" . (int)$customer_default_address_id . "'");
+    $default_address = tep_db_fetch_array($default_address_query);
+
+    return $default_address['entry_country_id'];
+  }
+
+////
+// added for phone entries now in address book. cluster solutions 12-15-2013
+  function tep_address_phone_label($customers_id, $address_id = 1, $html = false, $boln = '', $eoln = "\n") {
+    if (is_array($address_id) && !empty($address_id)) {
+      return tep_address_format($address_id['address_format_id'], $address_id, $html, $boln, $eoln);
+    }
+
+    $address_query = tep_db_query("select entry_firstname as firstname, entry_lastname as lastname, entry_company as company, entry_street_address as street_address, entry_suburb as suburb, entry_city as city, entry_postcode as postcode, entry_state as state, entry_zone_id as zone_id, entry_country_id as country_id, entry_telephone as telephone, entry_fax as fax from " . TABLE_ADDRESS_BOOK . " where customers_id = '" . (int)$customers_id . "' and address_book_id = '" . (int)$address_id . "'");
+    $address = tep_db_fetch_array($address_query);
+
+    $format_id = tep_get_address_format_id($address['country_id']);
+
+    return tep_address_format($format_id, $address, $html, $boln, $eoln);
   }
 
 ?>
