@@ -631,6 +631,17 @@ CREATE TABLE zones_to_geo_zones (
    KEY idx_zones_to_geo_zones_country_id (zone_country_id)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+  `id` int(11) NOT NULL auto_increment,
+  `customers_id` int(11) NOT NULL,
+  `oauth_uid` varchar(200)  default NULL,
+  `oauth_provider` varchar(200)  default NULL,
+  `username` varchar(100)  default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `customer_id` (`customers_id`)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 # data
 
 # 1 - Default, 2 - USA, 3 - Spain, 4 - Singapore, 5 - Germany

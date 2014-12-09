@@ -5,7 +5,7 @@
     <p><?php echo MODULE_CONTENT_SIMPLE_REGISTRATION_TEXT_NEW_CUSTOMER; ?></p>
 
     <?php echo tep_draw_form('create_account', tep_href_link(FILENAME_LOGIN, '', 'SSL'), 'post', 'class="form-horizontal" onsubmit="return check_form(create_account);"', true) . tep_draw_hidden_field('action', 'process'); ?>
-
+<? /*
       <div class="form-group has-feedback">
         <label for="inputFirstName" class="control-label col-xs-3"><?php echo ENTRY_FIRST_NAME; ?></label>
         <div class="col-xs-9">
@@ -26,6 +26,7 @@
           ?>
         </div>
       </div>
+*/?>
       <div class="form-group has-feedback">
         <label for="inputEmail" class="control-label col-xs-3"><?php echo ENTRY_EMAIL_ADDRESS; ?></label>
         <div class="col-xs-9">

@@ -85,7 +85,9 @@
   <div class="buttonSet">
 
 <?php
-  if (tep_count_customer_address_book_entries() < MAX_ADDRESS_BOOK_ENTRIES) {
+// social login start
+  if (tep_count_customer_address_book_entries() < MAX_ADDRESS_BOOK_ENTRIES && $customer_country_id > 0) { // -1 no first and last name, 0 first last name updated
+// social login end
 ?>
 
     <span class="buttonAction"><?php echo tep_draw_button(IMAGE_BUTTON_ADD_ADDRESS, 'glyphicon glyphicon-home', tep_href_link(FILENAME_ADDRESS_BOOK_PROCESS, '', 'SSL'), 'primary'); ?></span>

@@ -43,7 +43,7 @@
         $email_address = tep_db_prepare_input($HTTP_POST_VARS['email_address']);
         $password = tep_db_prepare_input($HTTP_POST_VARS['password']);
         $confirmation = tep_db_prepare_input($HTTP_POST_VARS['confirmation']);
-
+/*
         if (strlen($firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
           $error = true;
 
@@ -55,7 +55,7 @@
  
           $messageStack->add('login', ENTRY_LAST_NAME_ERROR);
         } 
-
+*/
         if (strlen($email_address) < ENTRY_EMAIL_ADDRESS_MIN_LENGTH) {
           $error = true;
 
