@@ -18,6 +18,12 @@
     tep_redirect(tep_href_link(FILENAME_LOGIN, '', 'SSL'));
   }
 
+// set comment should redirect hapens...Cluster Solutions 12-09-2014
+  if (!tep_session_is_registered('comments')) tep_session_register('comments');
+  if (isset($HTTP_POST_VARS['comments']) && tep_not_null($HTTP_POST_VARS['comments'])) {
+    $comments = tep_db_prepare_input($HTTP_POST_VARS['comments']);
+  }
+
 // if there is nothing in the customers cart, redirect them to the shopping cart page
   if ($cart->count_contents() < 1) {
     tep_redirect(tep_href_link(FILENAME_SHOPPING_CART));

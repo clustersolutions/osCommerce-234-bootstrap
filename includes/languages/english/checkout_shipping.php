@@ -30,3 +30,14 @@ define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', 'Continue Checkout Procedure');
 define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', 'to select the preferred payment method.');
 
 define('ERROR_NO_SHIPPING_AVAILABLE_TO_SHIPPING_ADDRESS', 'Shipping is currently not available for the selected shipping address. Please select or create a new shipping address to use with your purchase.');
+
+define('TABLE_HEADING_BILLING_ADDRESS', 'Billing Address');
+define('TITLE_BILLING_ADDRESS', 'Billing Address:');
+
+define('TABLE_HEADING_PAYMENT_METHOD', 'Payment Method');
+define('TEXT_SELECT_PAYMENT_METHOD', 'Please select the preferred payment method to use on this order.');
+define('TEXT_ENTER_PAYMENT_INFORMATION', 'This is currently the only payment method available to use on this order.');
+
+define('TITLE_CONTINUE_CHECKOUT_PROCEDURE', 'Continue Checkout Procedure');
+define('TEXT_CONTINUE_CHECKOUT_PROCEDURE', 'to confirm this order.');
+?>

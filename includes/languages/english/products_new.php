@@ -18,4 +18,4 @@ define('TEXT_MANUFACTURER', 'Manufacturer:');
 define('TEXT_PRICE', 'Price:');
 
 define('TEXT_NO_PRODUCTS', 'There are no new products to show.');
-
+?>
