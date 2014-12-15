@@ -22,6 +22,12 @@
   tep_session_unregister('customer_last_name');
   tep_session_unregister('customer_country_id');
   tep_session_unregister('customer_zone_id');
+/* CCGV - BEGIN */
+  tep_session_unregister('gv_id');
+  tep_session_unregister('cot_gv');
+  tep_session_unregister('cc_id');
+/* CCGV - END */
+
 if ( tep_session_is_registered('sendto') ) {
   tep_session_unregister('sendto');
 }

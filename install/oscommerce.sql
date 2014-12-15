@@ -642,6 +642,81 @@ CREATE TABLE users (
   KEY `customer_id` (`customers_id`)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+DROP TABLE IF EXISTS coupon_email_track;
+CREATE TABLE coupon_email_track (
+  unique_id int(11) NOT NULL auto_increment,
+  coupon_id int(11) NOT NULL default '0',
+  customer_id_sent int(11) NOT NULL default '0',
+  sent_firstname varchar(32) default NULL,
+  sent_lastname varchar(32) default NULL,
+  emailed_to varchar(32) default NULL,
+  date_sent datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (unique_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_gv_customer;
+CREATE TABLE coupon_gv_customer (
+  customer_id int(5) NOT NULL default '0',
+  amount decimal(8,4) NOT NULL default '0.0000',
+  amount_redeemed decimal(8,4) NOT NULL default '0.0000',
+  PRIMARY KEY  (customer_id),
+  KEY customer_id (customer_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_gv_queue;
+CREATE TABLE coupon_gv_queue (
+  unique_id int(5) NOT NULL auto_increment,
+  customer_id int(5) NOT NULL default '0',
+  order_id int(5) NOT NULL default '0',
+  amount decimal(8,4) NOT NULL default '0.0000',
+  date_created datetime NOT NULL default '0000-00-00 00:00:00',
+  date_released datetime NOT NULL default '0000-00-00 00:00:00',
+  ipaddr varchar(32) NOT NULL default '',
+  release_flag char(1) NOT NULL default 'N',
+  PRIMARY KEY  (unique_id),
+  KEY uid (unique_id,customer_id,order_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_redeem_track;
+CREATE TABLE coupon_redeem_track (
+  unique_id int(11) NOT NULL auto_increment,
+  coupon_id int(11) NOT NULL default '0',
+  customer_id int(11) NOT NULL default '0',
+  redeem_date datetime NOT NULL default '0000-00-00 00:00:00',
+  redeem_ip varchar(32) NOT NULL default '',
+  order_id int(11) NOT NULL default '0',
+  PRIMARY KEY  (unique_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupons;
+CREATE TABLE coupons (
+  coupon_id int(11) NOT NULL auto_increment,
+  coupon_type char(1) NOT NULL default 'F',
+  coupon_code varchar(32) NOT NULL default '',
+  coupon_amount decimal(8,4) NOT NULL default '0.0000',
+  coupon_minimum_order decimal(8,4) NOT NULL default '0.0000',
+  coupon_start_date datetime NOT NULL default '0000-00-00 00:00:00',
+  coupon_expire_date datetime NOT NULL default '0000-00-00 00:00:00',
+  uses_per_coupon int(5) NOT NULL default '1',
+  uses_per_user int(5) NOT NULL default '0',
+  restrict_to_products varchar(255) default NULL,
+  restrict_to_categories varchar(255) default NULL,
+  restrict_to_customers text,
+  coupon_active char(1) NOT NULL default 'Y',
+  date_created datetime NOT NULL default '0000-00-00 00:00:00',
+  date_modified datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (coupon_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupons_description;
+CREATE TABLE coupons_description (
+  coupon_id int(11) NOT NULL default '0',
+  language_id int(11) NOT NULL default '0',
+  coupon_name varchar(32) NOT NULL default '',
+  coupon_description text,
+  KEY coupon_id (coupon_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
 # data
 
 # 1 - Default, 2 - USA, 3 - Spain, 4 - Singapore, 5 - Germany

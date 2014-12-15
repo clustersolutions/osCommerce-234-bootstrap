@@ -200,6 +200,7 @@ define('IMAGE_BUTTON_SEARCH', 'Search');
 define('IMAGE_BUTTON_SHIPPING_OPTIONS', 'Shipping Options');
 define('IMAGE_BUTTON_TELL_A_FRIEND', 'Tell a Friend');
 define('IMAGE_BUTTON_UPDATE', 'Update');
+define('IMAGE_BUTTON_APPLY', 'Apply');
 define('IMAGE_BUTTON_UPDATE_CART', 'Update Cart');
 define('IMAGE_BUTTON_WRITE_REVIEW', 'Write Review');
 

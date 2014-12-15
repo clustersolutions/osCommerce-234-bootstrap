@@ -60,4 +60,12 @@
 // social login start
   define('TABLE_USERS', 'users');
 // social login end
+/* CCGV - BEGIN */
+  define('TABLE_COUPON_GV_CUSTOMER', 'coupon_gv_customer');
+  define('TABLE_COUPON_GV_QUEUE', 'coupon_gv_queue');
+  define('TABLE_COUPON_REDEEM_TRACK', 'coupon_redeem_track');
+  define('TABLE_COUPON_EMAIL_TRACK', 'coupon_email_track');
+  define('TABLE_COUPONS', 'coupons');
+  define('TABLE_COUPONS_DESCRIPTION', 'coupons_description');
+/* CCGV - END */
 ?>

@@ -60,4 +60,13 @@
   define('FILENAME_SSL_CHECK', 'ssl_check.php');
   define('FILENAME_TELL_A_FRIEND', 'tell_a_friend.php');
   define('FILENAME_UPCOMING_PRODUCTS', 'upcoming_products.php');
+/* CCGV - BEGIN */
+  define('FILENAME_GV_FAQ', 'gv_faq.php');
+  define('FILENAME_GV_REDEEM', 'gv_redeem.php');
+  define('FILENAME_GV_REDEEM_PROCESS', 'gv_redeem_process.php');
+  define('FILENAME_GV_SEND', 'gv_send.php');
+  define('FILENAME_GV_SEND_PROCESS', 'gv_send_process.php');
+  define('FILENAME_PRODUCT_LISTING_COL', 'product_listing_col.php');
+  define('FILENAME_POPUP_COUPON_HELP', 'popup_coupon_help.php');
+/* CCGV - END */
 ?>

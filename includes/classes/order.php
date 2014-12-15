@@ -302,6 +302,7 @@
                                         'model' => $products[$i]['model'],
                                         'tax' => tep_get_tax_rate($products[$i]['tax_class_id'], $tax_address['entry_country_id'], $tax_address['entry_zone_id']),
                                         'tax_description' => tep_get_tax_description($products[$i]['tax_class_id'], $tax_address['entry_country_id'], $tax_address['entry_zone_id']),
+                                        'orig_price' => $products[$i]['orig_price'],
                                         'price' => $products[$i]['price'],
                                         'final_price' => $products[$i]['price'] + $cart->attributes_price($products[$i]['id']),
                                         'weight' => $products[$i]['weight'],

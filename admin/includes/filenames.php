@@ -53,4 +53,11 @@
   define('FILENAME_VERSION_CHECK', 'version_check.php');
   define('FILENAME_WHOS_ONLINE', 'whos_online.php');
   define('FILENAME_ZONES', 'zones.php');
+// add CCGV define begin
+  define('FILENAME_GV_QUEUE', 'gv_queue.php');
+  define('FILENAME_GV_RELEASED', 'gv_queue_released.php'); //fnzb
+  define('FILENAME_GV_MAIL', 'gv_mail.php');
+  define('FILENAME_GV_SENT', 'gv_sent.php');
+  define('FILENAME_COUPON_ADMIN', 'coupon_admin.php');
+// add CCGV define end
 ?>

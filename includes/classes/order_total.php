@@ -77,5 +77,143 @@
 
       return $output_string;
     }
+
+/* CCGV - BEGIN */
+    function credit_selection() {
+      $selection_string = '';
+      $credit_class_string = '';
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        //$header_string =      '<h2>' . TABLE_HEADING_CREDIT . '</h2><div style="width:100%; margin:auto;"><span><font size="1pt">&nbsp;</font></span></div>';
+        reset($this->modules);
+        $output_string = '';
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+          if ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) {
+            if ($selection_string == '') $selection_string = $GLOBALS[$class]->credit_selection();
+            if ($use_credit_string != '' || $selection_string != '') {
+              $output_string = $selection_string;
+            }
+          }
+        }
+        if ($output_string != '') {
+          $output_string = $header_string . $output_string;
+        }
+      }
+      return $output_string;
+    }
+
+    function sub_credit_selection() {
+      //$selection_string = '';
+      $close_string = '';
+      $credit_class_string = '';
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        reset($this->modules);
+        $output_string = '';
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+
+          if ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) {
+
+            $use_credit_string = $GLOBALS[$class]->use_credit_amount();
+
+            //if ($selection_string == '') $selection_string = $GLOBALS[$class]->credit_selection();
+            if ($use_credit_string != '') { // || $selection_string != ''){
+              return $use_credit_string;
+            }
+          }
+        }
+      }
+      return $output_string;
+    }
+
+    function update_credit_account($i, $order_id=0) {
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        reset($this->modules);
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+          if ( ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) ) {
+            $GLOBALS[$class]->update_credit_account($i, $order_id);
+          }
+        }
+      }
+    }
+
+    function collect_posts() {
+      global $HTTP_POST_VARS, $HTTP_SESSION_VARS;
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        reset($this->modules);
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+          if ( ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) ) {
+            $post_var = 'c' . $GLOBALS[$class]->code;
+            if ($HTTP_POST_VARS[$post_var]) {
+              if (!tep_session_is_registered($post_var)) tep_session_register($post_var);
+              $post_var = $HTTP_POST_VARS[$post_var];
+            }
+            $GLOBALS[$class]->collect_posts();
+          }
+        }
+      }
+    }
+
+    function pre_confirmation_check() {
+      global $payment, $order, $credit_covers, $customer_id;
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        $total_deductions  = 0;
+        reset($this->modules);
+        $order_total = $order->info['total'];
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+          $order_total = $this->get_order_total_main($class,$order_total);
+          if ( ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) ) {
+            $total_deductions = $total_deductions + $GLOBALS[$class]->pre_confirmation_check($order_total);
+            $order_total = $order_total - $GLOBALS[$class]->pre_confirmation_check($order_total);
+          }
+        }
+        $gv_query = tep_db_query("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where customer_id = '" . $customer_id . "'");
+        $gv_result = tep_db_fetch_array($gv_query);
+        $gv_payment_amount = $gv_result['amount'];
+        if ($order->info['total'] - $gv_payment_amount <= 0 ) {
+          if (tep_session_is_registered('cot_gv')) {
+            if(!tep_session_is_registered('credit_covers')) tep_session_register('credit_covers');
+            $credit_covers = true;
+          }
+        } else {
+          if(tep_session_is_registered('credit_covers')) tep_session_unregister('credit_covers');
+        }
+      }
+    }
+
+    function apply_credit() {
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        reset($this->modules);
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+          if ( ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) ) {
+            $GLOBALS[$class]->apply_credit();
+          }
+        }
+      }
+    }
+
+    function clear_posts() {
+      global $HTTP_POST_VARS, $HTTP_SESSION_VARS;
+      if (MODULE_ORDER_TOTAL_INSTALLED) {
+        reset($this->modules);
+        while (list(, $value) = each($this->modules)) {
+          $class = substr($value, 0, strrpos($value, '.'));
+          if ( ($GLOBALS[$class]->enabled && $GLOBALS[$class]->credit_class) ) {
+            $post_var = 'c' . $GLOBALS[$class]->code;
+            if (tep_session_is_registered($post_var)) tep_session_unregister($post_var);
+          }
+        }
+      }
+    }
+
+    function get_order_total_main($class, $order_total) {
+      global $credit, $order;
+      return $order_total;
+    }
+/* CCGV - END */
   }
 ?>

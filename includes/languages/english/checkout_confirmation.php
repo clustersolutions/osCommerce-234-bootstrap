@@ -27,6 +27,7 @@ define('HEADING_PAYMENT_METHOD', 'Payment Method');
 define('HEADING_PAYMENT_INFORMATION', 'Payment Information');
 define('HEADING_ORDER_COMMENTS', 'Comments About Your Order');
 define('TABLE_HEADING_COMMENTS', 'Add Comments About Your Order');
+define('TABLE_HEADING_PROMO_CODE', 'Promo Code & Credit');
 
 define('TEXT_EDIT', 'Edit');
 ?>

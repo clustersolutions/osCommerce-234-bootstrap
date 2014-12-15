@@ -1652,4 +1652,14 @@
     }       
   } // end function
 
+////
+// Get Facebook Users ttl 01/27/14
+  function tep_customers_fbuser($customers_id) {
+    $fbuser_query = tep_db_query("select customers_id from " . TABLE_USERS . " where customers_id = '" . (int)$customers_id . "'");
+    if (tep_db_num_rows($fbuser_query) > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 ?>

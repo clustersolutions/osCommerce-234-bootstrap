@@ -45,30 +45,75 @@
     $comments = tep_db_prepare_input($HTTP_POST_VARS['comments']);
   }
 
-// load the selected payment module
-  require(DIR_WS_CLASSES . 'payment.php');
-  $payment_modules = new payment($payment);
+// load the selected shipping module
+  require(DIR_WS_CLASSES . 'shipping.php');
+  $shipping_modules = new shipping($shipping);
 
   require(DIR_WS_CLASSES . 'order.php');
   $order = new order;
 
+  require(DIR_WS_CLASSES . 'order_total.php');
+  $order_total_modules = new order_total;
+  $order_total_modules->collect_posts();
+  if (!$HTTP_POST_VARS['cot_gv']) {
+    if (tep_session_is_registered('cot_gv')) tep_session_unregister('cot_gv');
+  }
+  //$order_total_modules->pre_confirmation_check(); useless crap written by ametures!
+  $otm = $order_total_modules->process();
+  foreach ($otm as $votm) {
+    if ($votm['code'] == 'ot_total') {
+      if ($votm['value'] == 0) {
+        if (!tep_session_is_registered('credit_covers')) tep_session_register('credit_covers');
+        $credit_covers = true;
+      } else {
+        if (tep_session_is_registered('credit_covers')) tep_session_unregister('credit_covers');
+        $credit_covers = false;
+      }
+    }
+    if ($votm['code'] == 'ot_gv') $aa_gv = $votm['value'];
+    if ($votm['code'] == 'ot_subtotal') $aa_subtotal = $votm['value'];
+    if ($votm['code'] == 'ot_coupon') $aa_coupon = $votm['value'];
+    //echo $votm['code'] . ' ' . $GLOBALS[$votm['code']]->output[0]['value'] . '<br>';
+  }
+
+// added for chicken and egg problem with shipping based on net promo and not subtotal ttl 063014
+  if (isset($shipping['flatrate'])) {
+    if (($aa_subtotal - $aa_gv - $aa_coupon <= $shipping['minpurchase']) && $shipping['cost'] == $shipping['flatrate']) {
+      $shipping['cost'] = $shipping['nonflatrate'];
+      if (!tep_session_is_registered('tmp_cot_gv')) tep_session_register('tmp_cot_gv');
+      $tmp_cot_gv = $HTTP_POST_VARS['cot_gv'];
+      if (!tep_session_is_registered('tmp_gv_redeem_code')) tep_session_register('tmp_gv_redeem_code');
+      $tmp_gv_redeem_code = $HTTP_POST_VARS['gv_redeem_code'];
+      tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
+    }
+    if (($aa_subtotal - $aa_gv - $aa_coupon > $shipping['minpurchase']) && $shipping['cost'] == $shipping['nonflatrate']) {
+      $shipping['cost'] = $shipping['flatrate'];
+      if (!tep_session_is_registered('tmp_cot_gv')) tep_session_register('tmp_cot_gv');
+      $tmp_cot_gv = $HTTP_POST_VARS['cot_gv'];
+      if (!tep_session_is_registered('tmp_gv_redeem_code')) tep_session_register('tmp_gv_redeem_code');
+      $tmp_gv_redeem_code = $HTTP_POST_VARS['gv_redeem_code'];
+      tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
+    }
+  }
+
+// load the selected payment module
+  require(DIR_WS_CLASSES . 'payment.php');
+  $payment_modules = new payment($payment);
+
   $payment_modules->update_status();
 
-  if ( ($payment_modules->selected_module != $payment) || ( is_array($payment_modules->modules) && (sizeof($payment_modules->modules) > 1) && !is_object($$payment) ) || (is_object($$payment) && ($$payment->enabled == false)) ) {
-    //tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_PAYMENT_MODULE_SELECTED), 'SSL'));
+//  if ( ($payment_modules->selected_module != $payment) || ( is_array($payment_modules->modules) && (sizeof($payment_modules->modules) > 1) && !is_object($$payment) ) || (is_object($$payment) && ($$payment->enabled == false)) ) {
+/* CCGV - BEGIN */
+  if ( ( is_array($payment_modules->modules) && (sizeof($payment_modules->modules) > 1) && (!is_object($$payment)) && (!$credit_covers) ) || (is_object($$payment) && ($$payment->enabled == false)) ) {
+
+  // from original ccgv ttl ...if (((is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && (!is_object($$payment)) && (!$credit_covers)) || ((is_object($$payment)) && ($$payment->enabled == false))) {
+//  CCGV - END
+    tep_redirect(tep_href_link(FILENAME_CHECKOUT_SHIPPING, 'error_message=' . urlencode(ERROR_NO_PAYMENT_MODULE_SELECTED), 'SSL'));
   }
 
   if (is_array($payment_modules->modules)) {
     $payment_modules->pre_confirmation_check();
   }
-
-// load the selected shipping module
-  require(DIR_WS_CLASSES . 'shipping.php');
-  $shipping_modules = new shipping($shipping);
-
-  require(DIR_WS_CLASSES . 'order_total.php');
-  $order_total_modules = new order_total;
-  $order_total_modules->process();
 
 // Stock Check
   $any_out_of_stock = false;
@@ -115,13 +160,6 @@
     echo $messageStack->output('checkout_confirmation');
   }
 
-  if (isset($$payment->form_action_url)) {
-    $form_action_url = $$payment->form_action_url;
-  } else {
-    $form_action_url = tep_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL');
-  }
-  
-  echo tep_draw_form('checkout_confirmation', $form_action_url, 'post');
 ?>
 
 <div class="contentContainer">
@@ -179,7 +217,7 @@
 
     if (sizeof($order->info['tax_groups']) > 1) echo '                <td valign="top" align="right">' . tep_display_tax_value($order->products[$i]['tax']) . '%</td>' . "\n";
 
-    echo '                <td align="right" valign="top">' . $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) . '</td>' . "\n" .
+    echo '                <td align="right" valign="top">' . ($order->products[$i]['orig_price'] > $order->products[$i]['final_price'] ? '<del>' . $currencies->display_price($order->products[$i]['orig_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) . '</del>&nbsp;&nbsp;<span class="productSpecialPrice">' . $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) . '</span>' : $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty'])) . '</td>' . "\n" .
          '              </tr>' . "\n";
   }
 ?>
@@ -203,52 +241,105 @@
   </div>
   <div class="row">
 <?php
+/* CCGV - BEGIN */
+  $have_promos = false;
+  $promo_code = $order_total_modules->credit_selection();
+  $store_credit = $order_total_modules->sub_credit_selection();
+  if (tep_not_null($promo_code) || tep_not_null($store_credit)) {
+    $have_promos = true;
+  $gv_query = tep_db_query("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where customer_id = '" . $customer_id . "'");
+  $gv_result = tep_db_fetch_array($gv_query);
+?>
+    <div class="col-sm-6">
+      <div class="panel panel-success">
+        <div class="panel-heading"><?php echo '<strong>' . TABLE_HEADING_PROMO_CODE . '</strong>'; ?></div>
+        <div class="panel-body">
+        <?php
+          echo tep_draw_form('checkout_payment_gift', tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'), 'post');
+          echo '<div style="margin-bottom: 15px;">' . $promo_code . '</div>';
+          if (tep_session_is_registered('customer_id')){
+            if ($gv_result['amount'] > 0){
+              echo '<div style="margin-bottom: 5px;">' . $store_credit . '&nbsp;&nbsp;' . sprintf(VOUCHER_BALANCE, $currencies->format($gv_result['amount'])) . '</div>';
+            }
+          }
+
+          echo '<div class="pull-right">' . tep_draw_button(IMAGE_BUTTON_APPLY, 'glyphicon glyphicon-chevron-right', null, 'primary') . '</div>';
+          /*
+          if (isset($HTTP_GET_VARS['payment_error']) && is_object(${$HTTP_GET_VARS['payment_error']}) && ($error = ${$HTTP_GET_VARS['payment_error']}->get_error())) {
+        ?>
+          <p class="messageStackError"><?php echo tep_output_string_protected($error['error']); ?></p>
+        <?php
+          }
+          */
+        ?>
+        </form>
+        </div>
+      </div>
+    </div>
+<?php
+  }
+  if (isset($$payment->form_action_url)) {
+    $form_action_url = $$payment->form_action_url;
+  } else {
+    $form_action_url = tep_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL');
+  }
+
+  echo tep_draw_form('checkout_confirmation', $form_action_url, 'post');
+
   if (is_array($payment_modules->modules)) {
     if ($confirmation = $payment_modules->confirmation()) {
 ?>
-    <div class="col-sm-6 col-sm-push-6">
-      <div class="panel panel-warning">
+    <div id="payment" class="col-sm-6 <?php echo ($have_promos ? '' : 'col-sm-push-6'); ?>">
+      <div class="panel panel-success">
         <div class="panel-heading"><?php echo '<strong>' . $confirmation['image'] . '</strong>'; ?></div>
         <div class="panel-body">
           <div class="contentText row">
 <?php
       if (tep_not_null($confirmation['title'])) {
-        echo '<div class="col-sm-12">';
-        echo '  <div class="alert alert-danger">';
+        echo '            <div class="col-sm-12">';
+        echo '              <div class="alert alert-danger">';
         echo $confirmation['title'];
-        echo '  </div>';
-        echo '</div>';
+        echo '              </div>';
+        echo '            </div>';
       }
 ?>
 <?php
       if (isset($confirmation['fields'])) {
-        echo '<div class="col-sm-12">';
+        echo '            <div class="col-sm-12">';
         for ($i=0, $n=sizeof($confirmation['fields']); $i<$n; $i++) {
           echo $confirmation['fields'][$i]['title'] . ' ' . $confirmation['fields'][$i]['field'];
         }
-        echo '</div>';
+        echo '            </div>';
       }
 ?>
           </div>
         </div>
       </div>
     </div>
+    <script>
+      $(document).ready(function(){
+        if (1 == <?php echo ($credit_covers == true ? 1 : 0); ?>) {
+          $("#payment select").attr("disabled", "disabled");
+          $("#payment input[type='text']").attr("disabled", "disabled");
+          $("#payment").fadeTo('slow', 0.33);
+        }
+      });
+    </script>
 <?php
     }
   }
 ?>
-    <div class="col-sm-6 col-sm-pull-6">
+    <div class="col-sm-6 <?php echo ($have_promos ? 'col-sm-push-6' : 'col-sm-pull-6'); ?>">
       <div class="panel panel-info">
         <div class="panel-heading"><?php echo '<strong>' . TABLE_HEADING_COMMENTS . '</strong>'; ?></div>
         <div class="panel-body">
         <?php
-        echo tep_draw_textarea_field('comments', 'soft', 60, 3, $comments, 'id="inputComments" placeholder="' . TABLE_HEADING_COMMENTS . '"');
+          echo tep_draw_textarea_field('comments', 'soft', 60, 3, $comments, 'id="inputComments" placeholder="' . TABLE_HEADING_COMMENTS . '"');
         ?>
         </div>
       </div>
     </div>
   </div>
-
 
   <div class="clearfix"></div>
 
