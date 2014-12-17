@@ -33,7 +33,8 @@
   define('FILENAME_CONTACT_US', 'contact_us.php');
   define('FILENAME_CONDITIONS', 'conditions.php');
   define('FILENAME_COOKIE_USAGE', 'cookie_usage.php');
-  define('FILENAME_CREATE_ACCOUNT', 'create_account.php');
+  //define('FILENAME_CREATE_ACCOUNT', 'create_account.php');
+  define('FILENAME_CREATE_ACCOUNT', 'login.php');
   define('FILENAME_CREATE_ACCOUNT_SUCCESS', 'create_account_success.php');
   define('FILENAME_DEFAULT', 'index.php');
   define('FILENAME_DOWNLOAD', 'download.php');

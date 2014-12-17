@@ -26,6 +26,12 @@
 // needs to be included earlier to set the success message in the messageStack
   require(DIR_WS_LANGUAGES . $language . '/' . FILENAME_CHECKOUT_PAYMENT_ADDRESS);
 
+  if (isset($HTTP_POST_VARS['referer'])) {
+    $referer = ($HTTP_POST_VARS['referer'] ? true : false);
+  } else {
+    $referer = (preg_match('/checkout_confirmation/', $_SERVER['HTTP_REFERER']) ? true : false);
+  }
+
   $error = false;
   $process = false;
   if (isset($HTTP_POST_VARS['action']) && ($HTTP_POST_VARS['action'] == 'submit') && isset($HTTP_POST_VARS['formid']) && ($HTTP_POST_VARS['formid'] == $sessiontoken)) {
@@ -158,9 +164,13 @@
 
         $billto = tep_db_insert_id();
 
-        if (tep_session_is_registered('payment')) tep_session_unregister('payment');
+        // if (tep_session_is_registered('payment')) tep_session_unregister('payment');
 
-        tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+        if ($referer) {
+          tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
+        } else {
+          tep_redirect(tep_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+        }
       }
 // process the selected billing destination
     } elseif (isset($HTTP_POST_VARS['address'])) {
@@ -181,8 +191,12 @@
       $check_address = tep_db_fetch_array($check_address_query);
 
       if ($check_address['total'] == '1') {
-        if ($reset_payment == true) tep_session_unregister('payment');
-        tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+        // if ($reset_payment == true) tep_session_unregister('payment');
+        if ($referer) {
+          tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
+        } else {
+          tep_redirect(tep_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+        }
       } else {
         tep_session_unregister('billto');
       }
@@ -191,7 +205,11 @@
       if (!tep_session_is_registered('billto')) tep_session_register('billto');
       $billto = $customer_default_address_id;
 
-      tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+      if ($referer) {
+        tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
+      } else {
+        tep_redirect(tep_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+      }
     }
   }
 
@@ -200,7 +218,11 @@
     $billto = $customer_default_address_id;
   }
 
-  $breadcrumb->add(NAVBAR_TITLE_1, tep_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+  if ($referer) {
+    $breadcrumb->add(NAVBAR_TITLE_1, tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
+  } else {
+    $breadcrumb->add(NAVBAR_TITLE_1, tep_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+  }
   $breadcrumb->add(NAVBAR_TITLE_2, tep_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'));
 
   $addresses_count = tep_count_customer_address_book_entries();
@@ -270,8 +292,18 @@ function check_form_optional(form_name) {
 
 <div class="contentContainer">
 
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-info">
+      <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" role="tab" id="headingTwo">
+        <h4 class="panel-title">
+          <?php echo TABLE_HEADING_PAYMENT_ADDRESS;//TABLE_HEADING_ADDRESS_BOOK_ENTRIES; ?>
+        </h4>
+      </div>
+      <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+        <div class="panel-body">
 <?php
   if ($process == false) {
+/*
 ?>
 
   <h2><?php echo TABLE_HEADING_PAYMENT_ADDRESS; ?></h2>
@@ -292,17 +324,39 @@ function check_form_optional(form_name) {
   </div>
 
   <div class="clearfix"></div>
-  
+
 
 <?php
+*/
     if ($addresses_count > 1) {
 ?>
+        <script><!--
+          $(document).ready(function() {
+            $('#accordion').on('hidden.bs.collapse', function () {
+              boxes = $('.equal-height');
+              maxHeight = Math.max.apply(
+                Math, boxes.map(function() {
+                return $(this).height();
+              }).get());
+              boxes.height(maxHeight);
+            })
+            $('.panel.address').click(function() {
+              var panelClass = $(this).closest('.panel').attr("class");
+              $('.panel.address').removeClass('panel-info');
+              $('.panel.address').addClass('panel-default');
+              $('.panel.address').find('input').prop('checked', false);
+              $(this).closest('.panel').addClass('panel-info');
+              $(this).find('input').prop('checked', true);
+            });
+          });
+        //--></script>
+          <div class="contentText row">
+            <div class="col-sm-12">
+            <!-- <h2><?php// echo TABLE_HEADING_PAYMENT_ADDRESS;//TABLE_HEADING_ADDRESS_BOOK_ENTRIES; ?></h2> -->
 
-  <h2><?php echo TABLE_HEADING_ADDRESS_BOOK_ENTRIES; ?></h2>
-  
-  <div class="alert alert-info"><?php echo TEXT_SELECT_OTHER_PAYMENT_DESTINATION; ?></div>
+              <div class="alert alert-info"><?php echo TEXT_SELECT_OTHER_PAYMENT_DESTINATION; ?></div>
 
-  <div class="contentText row">
+              <div class="contentText row">
 
 <?php
       $radio_buttons = 0;
@@ -314,33 +368,52 @@ function check_form_optional(form_name) {
 
 
 ?>
-      <div class="col-sm-4">
-        <div class="panel panel-<?php echo ($addresses['address_book_id'] == $billto) ? 'primary' : 'default'; ?>">
-          <div class="panel-heading"><?php echo tep_output_string_protected($addresses['firstname'] . ' ' . $addresses['lastname']); ?></strong></div>
-          <div class="panel-body">
-            <?php echo tep_address_format($format_id, $addresses, true, ' ', '<br />'); ?>
-          </div>
-          <div class="panel-footer text-center"><?php echo tep_draw_radio_field('address', $addresses['address_book_id'], ($addresses['address_book_id'] == $billto)); ?></div>
-        </div>
-      </div>
+                <div class="col-sm-4">
+                  <div class="panel address panel-<?php echo ($addresses['address_book_id'] == $billto) ? 'info' : 'default'; ?>  equal-height">
+                    <div class="panel-heading"><strong><?php echo tep_output_string_protected($addresses['firstname'] . ' ' . $addresses['lastname']); ?></strong></div>
+                    <div class="panel-body">
+                      <div class="pull-left">
+                        <?php echo tep_draw_radio_field('address', $addresses['address_book_id'], ($addresses['address_book_id'] == $billto), 'onChange=panelSelect(this)') . '&nbsp;&nbsp;&nbsp;'; ?>
+                      </div>
+                      <div class="pull-left">
+                        <?php echo tep_address_format($format_id, $addresses, true, ' ', '<br />'); ?>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
 <?php
         $radio_buttons++;
       }
 ?>
 
-  </div>
+              </div>
+            </div>
+          </div>
 
 <?php
     }
   }
-
+?>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" role="tab" id="headingOne">
+        <h4 class="panel-title">
+          <?php echo TABLE_HEADING_NEW_PAYMENT_ADDRESS; ?>
+        </h4>
+      </div>
+      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <div class="panel-body">
+          <div class="col-sm-8 col-sm-offset-2">
+<?php
   if ($addresses_count < MAX_ADDRESS_BOOK_ENTRIES) {
 ?>
 
-  <h2><?php echo TABLE_HEADING_NEW_PAYMENT_ADDRESS; ?></h2>
+            <h2><?php echo TABLE_HEADING_NEW_PAYMENT_ADDRESS; ?></h2>
   
-  <div class="alert alert-info"><?php echo TEXT_CREATE_NEW_PAYMENT_ADDRESS; ?></div>
+            <div class="alert alert-info"><?php echo TEXT_CREATE_NEW_PAYMENT_ADDRESS; ?></div>
 
   <?php require(DIR_WS_MODULES . 'checkout_new_address.php'); ?>
 
@@ -348,8 +421,13 @@ function check_form_optional(form_name) {
   }
 ?>
 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="buttonSet">
-    <span class="buttonAction"><?php echo tep_draw_hidden_field('action', 'submit') . tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon glyphicon-chevron-right', null, 'primary'); ?></span>
+    <span class="buttonAction"><?php echo  tep_draw_hidden_field('referer', $referer) . tep_draw_hidden_field('action', 'submit') . tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon glyphicon-chevron-right', null, 'primary'); ?></span>
   </div>
 
   <div class="clearfix"></div>
@@ -358,21 +436,16 @@ function check_form_optional(form_name) {
     <div class="stepwizard">
       <div class="stepwizard-row">
         <div class="stepwizard-step">
-          <button type="button" class="btn btn-default btn-circle" disabled="disabled">1</button>
+          <button type="button" class="btn btn-<?php echo (!$referer ? 'primary' : 'default'); ?> btn-circle" disabled="disabled">1</button>
           <p><?php echo CHECKOUT_BAR_DELIVERY; ?></p>
         </div>
         <div class="stepwizard-step">
-          <button type="button" class="btn btn-primary btn-circle">2</button>
-          <p><?php echo CHECKOUT_BAR_PAYMENT; ?></p>
-        </div>
-        <div class="stepwizard-step">
-          <button type="button" class="btn btn-default btn-circle" disabled="disabled">3</button>
+          <button type="button" class="btn btn-<?php echo ($referer ? 'primary' : 'default'); ?> btn-circle" disabled="disabled">2</button>
           <p><?php echo CHECKOUT_BAR_CONFIRMATION; ?></p>
         </div>
       </div>
     </div>
   </div>
-
 
 <?php
   if ($process == true) {

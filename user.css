@@ -2,4 +2,17 @@
 .stepwizard-step {
     width: 50%;
 }
-
+#accordion .panel-heading h4:after {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+    float: right;        /* adjust as needed */
+}
+#accordion .panel-heading.collapsed h4:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+}
+#accordion .panel-heading:hover h4 {
+    text-decoration: underline;
+}
+.rbtn-margin { margin-left: 5px; }

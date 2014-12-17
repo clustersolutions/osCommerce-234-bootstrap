@@ -44,7 +44,29 @@
 
         if (in_array(basename($PHP_SELF), $pages_array)) {
           $oscTemplate->addBlock('<script src="ext/jquery/cookie.js"></script>' . "\n", $this->group);
-		      $oscTemplate->addBlock('<script>$(function() { var cc = $.cookie(\'list_grid\'); if (cc == \'grid\') { $(\'#product-listing .inline-span\').removeClass(\'one-across fluid-one-across\').addClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\'); } else { $(\'#product-listing .inline-span\').removeClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\').addClass(\'one-across fluid-one-across\'); } }); $(document).ready(function() { $(\'#list\').click(function(event){event.preventDefault();$(\'#product-listing .inline-span\').removeClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\').addClass(\'one-across fluid-one-across\');$.cookie(\'list_grid\', \'list\');}); $(\'#grid\').click(function(event){event.preventDefault();$(\'#product-listing .inline-span\').removeClass(\'one-across fluid-one-across\').addClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\');$.cookie(\'list_grid\', \'grid\');});});</script>' . "\n", $this->group);
+                      //$oscTemplate->addBlock('<script>$(function() {var cc = $.cookie(\'list_grid\');if (cc == \'list\') {$(\'#products .item\').removeClass(\'grid-group-item\').addClass(\'list-group-item\');}else {$(\'#products .item\').removeClass(\'list-group-item\').addClass(\'grid-group-item\');}$(document).ready(function() {$(\'#list\').click(function(event){event.preventDefault();$(\'#products .item\').addClass(\'list-group-item\').removeClass(\'grid-group-item\');$.cookie(\'list_grid\', \'list\');});$(\'#grid\').click(function(event){event.preventDefault();$(\'#products .item\').removeClass(\'list-group-item\').addClass(\'grid-group-item\');$.cookie(\'list_grid\', \'grid\');});});});</script>' . "\n", $this->group);
+		      $oscTemplate->addBlock('<script>
+$(function() { 
+  var cc = $.cookie(\'list_grid\'); 
+  if (cc == \'grid\') { 
+    $(\'#product-listing .inline-span\').removeClass(\'one-across fluid-one-across\').addClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\'); 
+  } else { 
+    $(\'#product-listing .inline-span\').removeClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\').addClass(\'one-across fluid-one-across\'); 
+  } 
+}); 
+$(document).ready(function() { 
+  $(\'#list\').click(function(event){
+    event.preventDefault();
+    $(\'#product-listing .inline-span\').removeClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\').addClass(\'one-across fluid-one-across\');
+    $.cookie(\'list_grid\', \'list\');
+  }); 
+  $(\'#grid\').click(function(event){
+    event.preventDefault();
+    $(\'#product-listing .inline-span\').removeClass(\'one-across fluid-one-across\').addClass(\''. MODULE_HEADER_TAGS_GRID_LIST_VIEW_DEFAULT .'-across fluid-'. MODULE_HEADER_TAGS_GRID_LIST_VIEW_MOBILE .'-across\');
+    $.cookie(\'list_grid\', \'grid\');
+  });
+});
+</script>' . "\n", $this->group);
         }
       }
     }

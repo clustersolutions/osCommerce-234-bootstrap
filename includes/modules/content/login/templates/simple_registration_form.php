@@ -57,7 +57,7 @@
           ?>
         </div>
       </div>
-      <p class="text-right"><?php echo tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon-user', null, 'primary'); ?></p>
+      <p class="text-right"><?php echo tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon glyphicon-user', null, 'primary'); ?></p>
 
     </form>
   </div>

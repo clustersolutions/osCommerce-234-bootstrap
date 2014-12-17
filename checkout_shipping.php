@@ -253,12 +253,23 @@ function rowOutEffect(object) {
   <div class="contentText row">
     <div class="col-sm-6">
       <h2><?php echo TABLE_HEADING_SHIPPING_ADDRESS; ?></h2>
-      <div class="panel panel-info">
+      <div class="panel panel-info equal-height">
         <div class="panel-heading"><?php echo '<strong>' .  TITLE_SHIPPING_ADDRESS . '</strong>' . tep_draw_button(IMAGE_BUTTON_CHANGE_ADDRESS, 'glyphicon glyphicon-home', tep_href_link(FILENAME_CHECKOUT_SHIPPING_ADDRESS, '', 'SSL'), NULL, NULL, 'pull-right btn-info btn-xs' ); ?></div>
         <div class="panel-body">
           <?php echo tep_address_phone_label($customer_id, $sendto, true, ' ', '<br />'); ?>
         </div>
       </div>
+    </div>
+    <div class="col-sm-6">
+      <h2><?php echo TABLE_HEADING_BILLING_ADDRESS; ?></h2>
+      <div class="panel panel-warning equal-height">
+        <div class="panel-heading"><?php echo '<strong>' . TITLE_BILLING_ADDRESS . '</strong>' . tep_draw_button(IMAGE_BUTTON_CHANGE_ADDRESS, 'glyphicon glyphicon-home', tep_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), NULL, NULL, 'pull-right btn-info btn-xs' ); ?></div>
+        <div class="panel-body">
+          <?php echo tep_address_phone_label($customer_id, $billto, true, ' ', '<br />'); ?>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-<?php echo ($payment_selection_size == 1 ? '12' : '6' ); ?>">
 <?php
   if (tep_count_shipping_modules() > 0) {
 ?>
@@ -381,13 +392,6 @@ function rowOutEffect(object) {
 
     </div>
     <div class="col-sm-6">
-      <h2><?php echo TABLE_HEADING_BILLING_ADDRESS; ?></h2>
-      <div class="panel panel-warning">
-        <div class="panel-heading"><?php echo '<strong>' . TITLE_BILLING_ADDRESS . '</strong>' . tep_draw_button(IMAGE_BUTTON_CHANGE_ADDRESS, 'glyphicon glyphicon-home', tep_href_link(FILENAME_CHECKOUT_PAYMENT_ADDRESS, '', 'SSL'), NULL, NULL, 'pull-right btn-info btn-xs' ); ?></div>
-        <div class="panel-body">
-          <?php echo tep_address_phone_label($customer_id, $billto, true, ' ', '<br />'); ?>
-        </div>
-      </div>
 <?php
   if ($payment_selection_size > 1) {
 ?>
