@@ -32,7 +32,14 @@
     }
 
     function execute() {
-      global $HTTP_GET_VARS, $HTTP_POST_VARS, $sessiontoken, $login_customer_id, $messageStack, $oscTemplate;
+      global $HTTP_GET_VARS, $HTTP_POST_VARS, $sessiontoken, $login_customer_id, $messageStack, $oscTemplate, $language, $PHP_SELF;
+
+// BOF Anti Robot Registration v3.0
+    if (ACCOUNT_VALIDATION == 'true' && ACCOUNT_CREATE_VALIDATION == 'true') {
+      require(DIR_WS_LANGUAGES . $language . '/' . FILENAME_ACCOUNT_VALIDATION);
+      include_once(DIR_WS_FUNCTIONS . FILENAME_ACCOUNT_VALIDATION);
+    }
+// EOF Anti Robot Registration v3.0
 
       $error = false;
 
@@ -43,6 +50,12 @@
         $email_address = tep_db_prepare_input($HTTP_POST_VARS['email_address']);
         $password = tep_db_prepare_input($HTTP_POST_VARS['password']);
         $confirmation = tep_db_prepare_input($HTTP_POST_VARS['confirmation']);
+// BOF Anti Robot Registration v3.0
+        if (ACCOUNT_VALIDATION == 'true' && ACCOUNT_CREATE_VALIDATION == 'true') {
+          $antirobotreg = tep_db_prepare_input($HTTP_POST_VARS['antirobotreg']);
+        }
+// EOF Anti Robot Registration v3.0
+
 /*
         if (strlen($firstname) < ENTRY_FIRST_NAME_MIN_LENGTH) {
           $error = true;
@@ -83,6 +96,14 @@
 
           $messageStack->add('login', ENTRY_PASSWORD_ERROR_NOT_MATCHING);
         }
+
+// BOF Anti Robotic Registration v3.0
+        $validated = $_POST['validated'];
+        if (ACCOUNT_VALIDATION == 'true' && ACCOUNT_CREATE_VALIDATION == 'true') {
+          include(DIR_WS_MODULES . FILENAME_CHECK_VALIDATION);
+          if ($entry_antirobotreg_error == true) $messageStack->add('login', $text_antirobotreg_error);
+        }
+// EOF Anti Robotic Registration v3.0
 
         if ($error == false) {
           $sql_data_array = array('customers_firstname' => $firstname,

@@ -12,6 +12,13 @@
 
   require('includes/application_top.php');
 
+// BOF Anti Robot Registration v3.0
+  if (ACCOUNT_VALIDATION == 'true' && CONTACT_US_VALIDATION == 'true') {
+    require(DIR_WS_LANGUAGES . $language . '/' . FILENAME_ACCOUNT_VALIDATION);
+    include_once('includes/functions/' . FILENAME_ACCOUNT_VALIDATION);
+  }
+// EOF Anti Robot Registration v3.0
+
   require(DIR_WS_LANGUAGES . $language . '/' . FILENAME_CONTACT_US);
 
   if (isset($HTTP_GET_VARS['action']) && ($HTTP_GET_VARS['action'] == 'send') && isset($HTTP_POST_VARS['formid']) && ($HTTP_POST_VARS['formid'] == $sessiontoken)) {
@@ -27,6 +34,12 @@
       $messageStack->add('contact', ENTRY_EMAIL_ADDRESS_CHECK_ERROR);
     }
 
+// BOF Anti Robot Registration v3.0
+    if (ACCOUNT_VALIDATION == 'true' && CONTACT_US_VALIDATION == 'true') {
+      if ($entry_antirobotreg_error == true) $error = true;
+    }
+// EOF Anti Robot Registration v3.0
+
     $actionRecorder = new actionRecorder('ar_contact_us', (tep_session_is_registered('customer_id') ? $customer_id : null), $name);
     if (!$actionRecorder->canPerform()) {
       $error = true;
@@ -36,6 +49,13 @@
       $messageStack->add('contact', sprintf(ERROR_ACTION_RECORDER, (defined('MODULE_ACTION_RECORDER_CONTACT_US_EMAIL_MINUTES') ? (int)MODULE_ACTION_RECORDER_CONTACT_US_EMAIL_MINUTES : 15)));
     }
 
+// BOF Anti Robotic Registration v3.0
+    if (ACCOUNT_VALIDATION == 'true' && CONTACT_US_VALIDATION == 'true') {
+      include(DIR_WS_MODULES . FILENAME_CHECK_VALIDATION);
+      if ($entry_antirobotreg_error == true) $messageStack->add('contact', $text_antirobotreg_error);
+    }
+// EOF Anti Robotic Registration v3.0
+
     if ($error == false) {
       tep_mail(STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, EMAIL_SUBJECT, $enquiry, $name, $email_address);
 
@@ -44,6 +64,11 @@
       tep_redirect(tep_href_link(FILENAME_CONTACT_US, 'action=success'));
     }
   }
+
+// BOF Anti Robot Registration v3.0
+  header('cache-control: no-store, no-cache, must-revalidate');
+  header("Pragma: no-cache");
+// EOF Anti Robotic Registration v3.0
 
   $breadcrumb->add(NAVBAR_TITLE, tep_href_link(FILENAME_CONTACT_US));
 
@@ -111,8 +136,20 @@
         ?>
       </div>
     </div>
+<!-- // BOF Anti Robot Registration v3.0-->
+<?php
+  if (ACCOUNT_VALIDATION == 'true' && strstr($PHP_SELF,'contact_us') &&  CONTACT_US_VALIDATION == 'true') {
+?>
+    <div class="form-group has-feedback">
+      <div class="col-xs-9 col-md-3 pull-right">
+        <?php echo FORM_REQUIRED_INPUT; include(DIR_WS_MODULES . FILENAME_DISPLAY_VALIDATION); ?>
+      </div>
+    </div>
+<?php
+  }
+?>
+<!-- // EOF Anti Robot Registration v3.0-->
   </div>
-
   <div class="buttonSet">
     <span class="buttonAction"><?php echo tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon glyphicon-send', null, 'primary'); ?></span>
   </div>

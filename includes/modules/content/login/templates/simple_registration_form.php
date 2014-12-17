@@ -57,6 +57,20 @@
           ?>
         </div>
       </div>
+<!-- // BOF Anti Robot Registration v3.0-->
+<?php
+  if (ACCOUNT_VALIDATION == 'true' && strstr($PHP_SELF,'login') &&  ACCOUNT_CREATE_VALIDATION == 'true') {
+?>
+    <div class="form-group has-feedback">
+      <div class="col-xs-9 col-md-6 pull-right">
+        <?php echo FORM_REQUIRED_INPUT; include(DIR_WS_MODULES . FILENAME_DISPLAY_VALIDATION); ?>
+      </div>
+    </div>
+<?php
+  }
+?>
+<!-- // EOF Anti Robot Registration v3.0-->
+
       <p class="text-right"><?php echo tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon glyphicon-user', null, 'primary'); ?></p>
 
     </form>

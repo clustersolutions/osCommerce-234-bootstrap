@@ -70,4 +70,9 @@
   define('FILENAME_PRODUCT_LISTING_COL', 'product_listing_col.php');
   define('FILENAME_POPUP_COUPON_HELP', 'popup_coupon_help.php');
 /* CCGV - END */
+// BOF Anti Robot Registration v3.0
+  define('FILENAME_ACCOUNT_VALIDATION', 'account_validation.php');
+  define('FILENAME_DISPLAY_VALIDATION', 'validation.php');
+  define('FILENAME_CHECK_VALIDATION', 'validation_check.php');
+// EOF Anti Robot Registration v3.0
 ?>

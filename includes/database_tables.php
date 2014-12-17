@@ -68,4 +68,7 @@
   define('TABLE_COUPONS', 'coupons');
   define('TABLE_COUPONS_DESCRIPTION', 'coupons_description');
 /* CCGV - END */
+// BOF Anti Robot Registration v3.0
+  define('TABLE_ANTI_ROBOT_REGISTRATION', 'anti_robotreg');
+// EOF Anti Robot Registration v3.0
 ?>
