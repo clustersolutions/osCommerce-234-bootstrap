@@ -30,6 +30,7 @@
 <base href="<?php echo (($request_type == 'SSL') ? HTTPS_SERVER : HTTP_SERVER) . DIR_WS_CATALOG; ?>">
 
 <link href="ext/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="ext/bootstrap/css/yamm.css" rel="stylesheet">
 <link href="custom.css" rel="stylesheet">
 <link href="user.css" rel="stylesheet">
 
