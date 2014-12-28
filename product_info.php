@@ -92,8 +92,8 @@
         }
 ?>
 
-    <div id="piGal" data-imgcount="<?php echo $photoset_layout; ?>">
-
+    <div id="piGal">
+      <ul class="bxslider">
 <?php
         $pi_counter = 0;
         $pi_html = array();
@@ -105,10 +105,21 @@
             $pi_html[] = '<div id="piGalDiv_' . $pi_counter . '">' . $pi['htmlcontent'] . '</div>';
           }
 
-          echo tep_image(DIR_WS_IMAGES . $pi['image'], '', '', '', 'id="piGalImg_' . $pi_counter . '"');
+          echo '        <li><a href="' . DIR_WS_IMAGES . $pi['image'] . '" rel="pigallery">' . tep_image(DIR_WS_IMAGES . $pi['image'], '', '', '', 'id="piGalImg_' . $pi_counter . '"') . '</a></li>' . "\n";
+        }
+?>
+      </ul>
+      <div id="bx-pager">
+<?php
+        $pi_counter = 0;
+        tep_db_data_seek($pi_query, 0);
+        while ($pi = tep_db_fetch_array($pi_query)) {
+          echo '        <a data-slide-index="' . $pi_counter . '" href="">' . tep_image(DIR_WS_IMAGES . $pi['image'], '', SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, '', false) . '</a>' . "\n";
+          $pi_counter++;
         }
 ?>
 
+      </div>
     </div>
 
 <?php

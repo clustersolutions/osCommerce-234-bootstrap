@@ -17,3 +17,7 @@ body { padding-top: 50px; }
     text-decoration: underline;
 }
 .rbtn-margin { margin-left: 5px; }
+#piGal {
+    float: left;
+    width: auto;
+}
