@@ -72,6 +72,52 @@
 <div class="contentContainer">
   <div class="contentText">
 
+<ul class="bxslider">
+  <li><a class="colorbox" rel="gal" href="images/1021_royalblue_l.jpg"><img src="images/1021_royalblue_l.jpg" /></a></li>
+  <li><a class="colorbox" rel="gal" href="images/1021_navy_l.jpg"><img src="images/1021_navy_l.jpg" /></a></li>
+  <li><a class="colorbox" rel="gal" href="images/1021_red_l.jpg"><img src="images/1021_red_l.jpg" /></a></li>
+</ul>
+
+<div id="bx-pager">
+  <a data-slide-index="0" href=""><img src="images/1021_royalblue.jpg" /></a>
+  <a data-slide-index="1" href=""><img src="images/1021_navy.jpg" /></a>
+  <a data-slide-index="2" href=""><img src="images/1021_red.jpg" /></a>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('a.colorbox').zoom().click(function(){
+      $('a.colorbox').colorbox({rel: 'gal'});
+    });
+});
+/*
+$("a.colorbox").colorbox({
+  rel:'gal'
+});
+/*
+.hover(function() {
+$("a[rel^='gal']").jqzoom({
+  zoomType: 'standardzoom',
+  title: false,
+  lens: false,
+  //showEffect: 'fadein',
+  //hideEffect: 'fadeout',
+  //fadeinSpeed: 'fast',
+  //fadeoutSpeed: 'fast',
+  zoomWidth: 580,
+  zoomHeight: 580
+})
+});
+*/
+$('.bxslider').bxSlider({
+  pagerCustom: '#bx-pager',
+  mode: 'fade',
+  controls: false,
+  slideWidth: 400
+});
+
+</script>
+
+
 <?php
     if (tep_not_null($product_info['products_image'])) {
       $photoset_layout = '1';
@@ -92,8 +138,8 @@
         }
 ?>
 
-    <div id="piGal">
-      <ul class="bxslider">
+    <div id="piGal" data-imgcount="<?php echo $photoset_layout; ?>">
+
 <?php
         $pi_counter = 0;
         $pi_html = array();
@@ -105,21 +151,10 @@
             $pi_html[] = '<div id="piGalDiv_' . $pi_counter . '">' . $pi['htmlcontent'] . '</div>';
           }
 
-          echo '        <li><a href="' . DIR_WS_IMAGES . $pi['image'] . '" rel="pigallery">' . tep_image(DIR_WS_IMAGES . $pi['image'], '', '', '', 'id="piGalImg_' . $pi_counter . '"') . '</a></li>' . "\n";
-        }
-?>
-      </ul>
-      <div id="bx-pager">
-<?php
-        $pi_counter = 0;
-        tep_db_data_seek($pi_query, 0);
-        while ($pi = tep_db_fetch_array($pi_query)) {
-          echo '        <a data-slide-index="' . $pi_counter . '" href="">' . tep_image(DIR_WS_IMAGES . $pi['image'], '', SMALL_IMAGE_WIDTH, SMALL_IMAGE_HEIGHT, '', false) . '</a>' . "\n";
-          $pi_counter++;
+          echo tep_image(DIR_WS_IMAGES . $pi['image'], '', '', '', 'id="piGalImg_' . $pi_counter . '"');
         }
 ?>
 
-      </div>
     </div>
 
 <?php

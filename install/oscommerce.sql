@@ -522,6 +522,7 @@ CREATE TABLE reviews (
   last_modified datetime,
   reviews_status tinyint(1) NOT NULL default '0',
   reviews_read int(5) NOT NULL default '0',
+  verified_buyer boolean default false,
   PRIMARY KEY (reviews_id),
   KEY idx_reviews_products_id (products_id),
   KEY idx_reviews_customers_id (customers_id)
@@ -532,8 +533,17 @@ CREATE TABLE reviews_description (
   reviews_id int NOT NULL,
   languages_id int NOT NULL,
   reviews_text text NOT NULL,
+  reviews_headline text not null,
   PRIMARY KEY (reviews_id, languages_id)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS reviews_images;
+CREATE TABLE reviews_images (   
+  reviews_id int(11) NOT NULL,   
+  reviews_image varchar(64) DEFAULT NULL,   
+  display_status tinyint(1) DEFAULT '0',   
+  PRIMARY KEY (reviews_id) 
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 DROP TABLE IF EXISTS sec_directory_whitelist;
 CREATE TABLE sec_directory_whitelist (

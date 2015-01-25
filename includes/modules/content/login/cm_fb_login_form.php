@@ -2,10 +2,7 @@
 /*
   $Id$
 
-  osCommerce, Open Source E-Commerce Solutions
-  http://www.oscommerce.com
-
-  Copyright (c) 2014 osCommerce
+  Copyright (c) 2014 Facebook Login module For osCommerce by Cluster Solutions
 
   Released under the GNU General Public License
 */
