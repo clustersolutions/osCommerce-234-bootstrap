@@ -288,6 +288,7 @@ define('HEADER_HOME', '<i class="glyphicon glyphicon-home"></i><span class="hidd
 define('HEADER_WHATS_NEW', '<i class="glyphicon glyphicon-certificate"></i><span class="hidden-sm">  New Products</span>');
 define('HEADER_SPECIALS', '<i class="glyphicon glyphicon-fire"></i><span class="hidden-sm"> Special Offers</span>');
 define('HEADER_REVIEWS', '<i class="glyphicon glyphicon-comment"></i><span class="hidden-sm"> Reviews</span>');
+define('HEADER_WORDPRESS', '<i class="glyphicon glyphicon-pencil"></i><span class="hidden-sm"> Wordpress</span>');
 // header dropdowns
 define('HEADER_ACCOUNT_LOGIN', '<i class="glyphicon glyphicon-log-in"></i> Log In');
 define('HEADER_ACCOUNT_LOGOFF', '<i class="glyphicon glyphicon-log-out"></i> Log Off');
