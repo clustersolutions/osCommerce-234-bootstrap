@@ -5,7 +5,7 @@
     <p><?php echo MODULE_CONTENT_SIMPLE_REGISTRATION_TEXT_NEW_CUSTOMER; ?></p>
 
     <?php echo tep_draw_form('create_account', tep_href_link(FILENAME_LOGIN, '', 'SSL'), 'post', 'class="form-horizontal" onsubmit="return check_form(create_account);"', true) . tep_draw_hidden_field('action', 'process'); ?>
-
+<? /*
       <div class="form-group has-feedback">
         <label for="inputFirstName" class="control-label col-xs-3"><?php echo ENTRY_FIRST_NAME; ?></label>
         <div class="col-xs-9">
@@ -26,6 +26,7 @@
           ?>
         </div>
       </div>
+*/?>
       <div class="form-group has-feedback">
         <label for="inputEmail" class="control-label col-xs-3"><?php echo ENTRY_EMAIL_ADDRESS; ?></label>
         <div class="col-xs-9">
@@ -56,7 +57,21 @@
           ?>
         </div>
       </div>
-      <p class="text-right"><?php echo tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon-user', null, 'primary'); ?></p>
+<!-- // BOF Anti Robot Registration v3.0-->
+<?php
+  if (ACCOUNT_VALIDATION == 'true' && strstr($PHP_SELF,'login') &&  ACCOUNT_CREATE_VALIDATION == 'true') {
+?>
+    <div class="form-group has-feedback">
+      <div class="col-xs-9 col-md-6 pull-right">
+        <?php echo FORM_REQUIRED_INPUT; include(DIR_WS_MODULES . FILENAME_DISPLAY_VALIDATION); ?>
+      </div>
+    </div>
+<?php
+  }
+?>
+<!-- // EOF Anti Robot Registration v3.0-->
+
+      <p class="text-right"><?php echo tep_draw_button(IMAGE_BUTTON_CONTINUE, 'glyphicon glyphicon-user', null, 'primary'); ?></p>
 
     </form>
   </div>

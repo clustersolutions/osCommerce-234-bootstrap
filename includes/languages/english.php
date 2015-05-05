@@ -19,7 +19,7 @@
 @setlocale(LC_ALL, array('en_US.UTF-8', 'en_US.UTF8', 'enu_usa'));
 
 define('DATE_FORMAT_SHORT', '%m/%d/%Y');  // this is used for strftime()
-define('DATE_FORMAT_LONG', '%A %d %B, %Y'); // this is used for strftime()
+define('DATE_FORMAT_LONG', '%A %d %B, %Y %l:%M%p %Z'); // this is used for strftime()
 define('DATE_FORMAT', 'm/d/Y'); // this is used for date()
 define('DATE_TIME_FORMAT', DATE_FORMAT_SHORT . ' %H:%M:%S');
 define('JQUERY_DATEPICKER_I18N_CODE', ''); // leave empty for en_US; see http://jqueryui.com/demos/datepicker/#localization
@@ -200,6 +200,7 @@ define('IMAGE_BUTTON_SEARCH', 'Search');
 define('IMAGE_BUTTON_SHIPPING_OPTIONS', 'Shipping Options');
 define('IMAGE_BUTTON_TELL_A_FRIEND', 'Tell a Friend');
 define('IMAGE_BUTTON_UPDATE', 'Update');
+define('IMAGE_BUTTON_APPLY', 'Apply');
 define('IMAGE_BUTTON_UPDATE_CART', 'Update Cart');
 define('IMAGE_BUTTON_WRITE_REVIEW', 'Write Review');
 
@@ -308,3 +309,4 @@ define('PRODUCT_SUBSCRIBED', '%s has been added to your Notification List');
 define('PRODUCT_UNSUBSCRIBED', '%s has been removed from your Notification List');
 define('PRODUCT_ADDED', '%s has been added to your Cart');
 define('PRODUCT_REMOVED', '%s has been removed from your Cart');
+?>

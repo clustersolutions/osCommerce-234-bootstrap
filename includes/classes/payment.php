@@ -81,16 +81,16 @@
               '  var error = 0;' . "\n" .
               '  var error_message = "' . JS_ERROR . '";' . "\n" .
               '  var payment_value = null;' . "\n" .
-              '  if (document.checkout_payment.payment.length) {' . "\n" .
-              '    for (var i=0; i<document.checkout_payment.payment.length; i++) {' . "\n" .
-              '      if (document.checkout_payment.payment[i].checked) {' . "\n" .
-              '        payment_value = document.checkout_payment.payment[i].value;' . "\n" .
+              '  if (document.checkout_address.payment.length) {' . "\n" .
+              '    for (var i=0; i<document.checkout_address.payment.length; i++) {' . "\n" .
+              '      if (document.checkout_address.payment[i].checked) {' . "\n" .
+              '        payment_value = document.checkout_address.payment[i].value;' . "\n" .
               '      }' . "\n" .
               '    }' . "\n" .
-              '  } else if (document.checkout_payment.payment.checked) {' . "\n" .
-              '    payment_value = document.checkout_payment.payment.value;' . "\n" .
-              '  } else if (document.checkout_payment.payment.value) {' . "\n" .
-              '    payment_value = document.checkout_payment.payment.value;' . "\n" .
+              '  } else if (document.checkout_address.payment.checked) {' . "\n" .
+              '    payment_value = document.checkout_address.payment.value;' . "\n" .
+              '  } else if (document.checkout_address.payment.value) {' . "\n" .
+              '    payment_value = document.checkout_address.payment.value;' . "\n" .
               '  }' . "\n\n";
 
         reset($this->modules);

@@ -522,6 +522,7 @@ CREATE TABLE reviews (
   last_modified datetime,
   reviews_status tinyint(1) NOT NULL default '0',
   reviews_read int(5) NOT NULL default '0',
+  verified_buyer boolean default false,
   PRIMARY KEY (reviews_id),
   KEY idx_reviews_products_id (products_id),
   KEY idx_reviews_customers_id (customers_id)
@@ -532,8 +533,17 @@ CREATE TABLE reviews_description (
   reviews_id int NOT NULL,
   languages_id int NOT NULL,
   reviews_text text NOT NULL,
+  reviews_headline text not null,
   PRIMARY KEY (reviews_id, languages_id)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS reviews_images;
+CREATE TABLE reviews_images (   
+  reviews_id int(11) NOT NULL,   
+  reviews_image varchar(64) DEFAULT NULL,   
+  display_status tinyint(1) DEFAULT '0',   
+  PRIMARY KEY (reviews_id) 
+)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 DROP TABLE IF EXISTS sec_directory_whitelist;
 CREATE TABLE sec_directory_whitelist (
@@ -630,6 +640,100 @@ CREATE TABLE zones_to_geo_zones (
    PRIMARY KEY (association_id),
    KEY idx_zones_to_geo_zones_country_id (zone_country_id)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+  `id` int(11) NOT NULL auto_increment,
+  `customers_id` int(11) NOT NULL,
+  `oauth_uid` varchar(200)  default NULL,
+  `oauth_provider` varchar(200)  default NULL,
+  `username` varchar(100)  default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `customer_id` (`customers_id`)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_email_track;
+CREATE TABLE coupon_email_track (
+  unique_id int(11) NOT NULL auto_increment,
+  coupon_id int(11) NOT NULL default '0',
+  customer_id_sent int(11) NOT NULL default '0',
+  sent_firstname varchar(32) default NULL,
+  sent_lastname varchar(32) default NULL,
+  emailed_to varchar(32) default NULL,
+  date_sent datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (unique_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_gv_customer;
+CREATE TABLE coupon_gv_customer (
+  customer_id int(5) NOT NULL default '0',
+  amount decimal(8,4) NOT NULL default '0.0000',
+  amount_redeemed decimal(8,4) NOT NULL default '0.0000',
+  PRIMARY KEY  (customer_id),
+  KEY customer_id (customer_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_gv_queue;
+CREATE TABLE coupon_gv_queue (
+  unique_id int(5) NOT NULL auto_increment,
+  customer_id int(5) NOT NULL default '0',
+  order_id int(5) NOT NULL default '0',
+  amount decimal(8,4) NOT NULL default '0.0000',
+  date_created datetime NOT NULL default '0000-00-00 00:00:00',
+  date_released datetime NOT NULL default '0000-00-00 00:00:00',
+  ipaddr varchar(32) NOT NULL default '',
+  release_flag char(1) NOT NULL default 'N',
+  PRIMARY KEY  (unique_id),
+  KEY uid (unique_id,customer_id,order_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupon_redeem_track;
+CREATE TABLE coupon_redeem_track (
+  unique_id int(11) NOT NULL auto_increment,
+  coupon_id int(11) NOT NULL default '0',
+  customer_id int(11) NOT NULL default '0',
+  redeem_date datetime NOT NULL default '0000-00-00 00:00:00',
+  redeem_ip varchar(32) NOT NULL default '',
+  order_id int(11) NOT NULL default '0',
+  PRIMARY KEY  (unique_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupons;
+CREATE TABLE coupons (
+  coupon_id int(11) NOT NULL auto_increment,
+  coupon_type char(1) NOT NULL default 'F',
+  coupon_code varchar(32) NOT NULL default '',
+  coupon_amount decimal(8,4) NOT NULL default '0.0000',
+  coupon_minimum_order decimal(8,4) NOT NULL default '0.0000',
+  coupon_start_date datetime NOT NULL default '0000-00-00 00:00:00',
+  coupon_expire_date datetime NOT NULL default '0000-00-00 00:00:00',
+  uses_per_coupon int(5) NOT NULL default '1',
+  uses_per_user int(5) NOT NULL default '0',
+  restrict_to_products varchar(255) default NULL,
+  restrict_to_categories varchar(255) default NULL,
+  restrict_to_customers text,
+  coupon_active char(1) NOT NULL default 'Y',
+  date_created datetime NOT NULL default '0000-00-00 00:00:00',
+  date_modified datetime NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (coupon_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS coupons_description;
+CREATE TABLE coupons_description (
+  coupon_id int(11) NOT NULL default '0',
+  language_id int(11) NOT NULL default '0',
+  coupon_name varchar(32) NOT NULL default '',
+  coupon_description text,
+  KEY coupon_id (coupon_id)
+) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS anti_robotreg;
+CREATE TABLE anti_robotreg (
+session_id char(32) DEFAULT '' NOT NULL,
+reg_key char(10) NOT NULL,
+timestamp int(11) unsigned NOT NULL,
+PRIMARY KEY (session_id))
+CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 # data
 
@@ -1644,3 +1748,26 @@ INSERT INTO configuration (configuration_title, configuration_key, configuration
 INSERT INTO configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable New User Module', 'MODULE_CONTENT_CREATE_ACCOUNT_LINK_STATUS', 'True', 'Do you want to enable the new user module?', '6', '1', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now());
 INSERT INTO configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Content Width', 'MODULE_CONTENT_CREATE_ACCOUNT_LINK_CONTENT_WIDTH', 'Half', 'Should the content be shown in a full or half width container?', '6', '1', 'tep_cfg_select_option(array(\'Full\', \'Half\'), ', now());
 INSERT INTO configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_CONTENT_CREATE_ACCOUNT_LINK_SORT_ORDER', '2000', 'Sort order of display. Lowest is displayed first.', '6', '0', now());
+#Anti-robot Registration
+INSERT INTO configuration_group (configuration_group_id, configuration_group_title, configuration_group_description, sort_order, visible) VALUES ('736', 'Anti Robot Reg', 'Anti Robot Registration', 300, 1);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Activate the Anti Robot Registration?', 'ACCOUNT_VALIDATION', 'true', 'This forces the user to enter a visual code, preventing bots from automatically registering.', 736, 1, now(), now(), NULL, 'tep_cfg_select_option(array(\'true\', \'false\'),');
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Activate for New Users? ', 'ACCOUNT_CREATE_VALIDATION', 'true', 'Force the user to enter a visual code when creating a new account. (OPTIONAL)', 736, 2, now(), now(), NULL, 'tep_cfg_select_option(array(\'true\', \'false\'),');
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Activate for Contact us? ', 'CONTACT_US_VALIDATION', 'true', 'Force the user to enter a visual code when using contact us form. (OPTIONAL)', 736, 5, now(), now(), NULL, 'tep_cfg_select_option(array(\'true\', \'false\'),');
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Length of Validation Code.', 'ENTRY_VALIDATION_LENGTH', '5', 'Default Length= 5  Max= 10', 736, 50, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Width of validation image', 'ANTI_ROBOT_IMAGE_WIDTH', '260', 'The width of the validation code image in pixels.<br><em>Set to 0 for Auto Width.</em>', 736, 51, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Height of validation image', 'ANTI_ROBOT_IMAGE_HEIGHT', '50', 'The height of the validation code image in pixels.<br><em>Set to 0 for Auto Height.</em>', 736, 52, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Horizontal spacing between code characters', 'ANTI_ROBOT_IMAGE_WHITESPACE', '10', 'The horizontal inter-character white space in pixels between characters in the validation code image', 736, 53, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Vertical character spacing for validation image', 'ANTI_ROBOT_IMAGE_TOP_MARGIN', '10', 'The amount of vertical white space variation between chars in pixels in the validation code image.', 736, 54, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Use TrueType fonts?', 'ANTI_ROBOT_IMAGE_USE_TTF', 'true', 'Use the selected Truetype font for the characters in the validation image otherwise a PHP bitmap font will be used.', 736, 55, now(), now(), NULL, "tep_cfg_select_option(array('true', 'false'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'TrueType font used', 'ANTI_ROBOT_IMAGE_TTF', 'arial.ttf', 'Type the name of the TrueType font face to use eg arial.ttf. <em>Only used if Use TrueType fonts set to true.</em> Ensure font is uploaded to server.', 736, 56, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Max font angle', 'ANTI_ROBOT_FONT_ANGLE', 20, 'The maximum angle variation from vertical for all characters. <em>Only used if Use TrueType fonts set to true.</em>', 736, 57, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Truetype font size', 'ANTI_ROBOT_IMAGE_FONT_SIZE', 20, 'Font size in points (for GD2, else pixels for GD1) to use for TrueType fonts.', 736, 58, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Background color', 'ANTI_ROBOT_IMAGE_BACKGROUND_COLOR', '0xFFFFFF', 'Background color to use for validation image (expressed as a hexadecimal RGB color value). <br>You can use this web-based <a href="http://www.visibone.com/colorlab/big.html" target="_blank">Color picker</a>.', 736, 59, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Text color', 'ANTI_ROBOT_IMAGE_TEXT_COLOR', '0x0000FF', 'Text color to use for validation image (expressed as a hexadecimal RGB color value). <br>You can use this web based <a href="http://www.visibone.com/colorlab/big.html" target="_blank">Color picker</a>.', 736, 60, now(), now(), NULL, NULL);
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Apply noise filter?', 'ANTI_ROBOT_IMAGE_FILTER_NOISE', 'true', 'Add noise to the validation image.<br><em>Filters are additive.</em>', 736, 61, now(), now(), NULL, "tep_cfg_select_option(array('true', 'false'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Apply scatter filter?', 'ANTI_ROBOT_IMAGE_FILTER_SCATTER', 'true', 'Add scatter to the validation image.<br><em>Filters are additive.</em>', 736, 62, now(), now(), NULL, "tep_cfg_select_option(array('true', 'false'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Apply interlace filter?', 'ANTI_ROBOT_IMAGE_FILTER_INTERLACE', 'false', 'Add interlace to the validation image.<br><em>Filters are additive.</em>', 736, 63, now(), now(), NULL, "tep_cfg_select_option(array('true', 'false'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Apply grayscale filter?', 'ANTI_ROBOT_IMAGE_FILTER_GREYSCALE', 'false', 'Force the validation image to grayscale.<br><em>Filters are additive.</em>', 736, 64, now(), now(), NULL, "tep_cfg_select_option(array('true', 'false'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Apply Distortion Filter?', 'ANTI_ROBOT_IMAGE_FILTER_DISTORT', 'none', 'Apply Image Distortion Filter.<br><em>Filters are additive.</em>', 736, 65, now(), now(), NULL, "tep_cfg_select_option(array('horizontal', 'vertical', 'both', 'none'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Apply Lines Filter?', 'ANTI_ROBOT_IMAGE_FILTER_LINES', 'false', 'Add Lines To Image (backround or foreground).<br><em>Filters are additive.</em>', 736, 66, now(), now(), NULL, "tep_cfg_select_option(array('background', 'foreground', 'false'),");
+INSERT INTO configuration (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES ('', 'Colour for lines filter', 'ANTI_ROBOT_IMAGE_LINES_COLOR', '0xFF0000', 'Lines color for lines filter (expressed as a hexadecimal RGB color value). <br>You can use this web based <a href="http://www.visibone.com/colorlab/big.html" target="_blank">Color picker</a>.', 736, 67, now(), now(), NULL, NULL);

@@ -1449,4 +1449,15 @@
     return tep_address_format($format_id, $address, $html, $boln, $eoln);
   }
 
+// social login start
+  function tep_date_raw_social_logins($date, $reverse = false) { //we will use the format m/d/yyyy
+
+  if ($reverse) {
+    return substr($date, 3, 2) . substr($date, 0, 2) . substr($date, 6, 4);
+  } else {
+    return substr($date, 6, 4) . substr($date, 0, 2) . substr($date, 3, 2);
+  }
+}
+// social login end
+
 ?>

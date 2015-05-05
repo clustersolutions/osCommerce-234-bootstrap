@@ -29,4 +29,8 @@ define('TEXT_DELETE_REVIEWS', 'Delete %s review(s)');
 define('TEXT_INFO_HEADING_DELETE_CUSTOMER', 'Delete Customer');
 define('TYPE_BELOW', 'Type below');
 define('PLEASE_SELECT', 'Select One');
+/* CCGV (fnzb) - BEGIN */
+define('TABLE_HEADING_STORE_CREDIT', 'Store Credit');
+define('TABLE_HEADING_STORE_CREDIT_REDEEMED', 'Store Credit Redeemed');
+/* CCGV (fnzb) - END */
 ?>

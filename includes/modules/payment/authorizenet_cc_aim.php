@@ -22,6 +22,7 @@
       $this->code = 'authorizenet_cc_aim';
       $this->title = MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TEXT_TITLE;
       $this->public_title = MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TEXT_PUBLIC_TITLE;
+      $this->public_image = MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TEXT_PUBLIC_IMAGE;
       $this->description = MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TEXT_DESCRIPTION;
       $this->sort_order = defined('MODULE_PAYMENT_AUTHORIZENET_CC_AIM_SORT_ORDER') ? MODULE_PAYMENT_AUTHORIZENET_CC_AIM_SORT_ORDER : 0;
       $this->enabled = defined('MODULE_PAYMENT_AUTHORIZENET_CC_AIM_STATUS') && (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_STATUS == 'True') ? true : false;
@@ -31,6 +32,7 @@
         if ( (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TRANSACTION_SERVER == 'Test') || (MODULE_PAYMENT_AUTHORIZENET_CC_AIM_TRANSACTION_MODE == 'Test') ) {
           $this->title .= ' [Test]';
           $this->public_title .= ' (' . $this->code . '; Test)';
+          $this->public_image .= ' [Test]';
         }
 
         $this->description .= $this->getTestLinkInfo();
@@ -90,7 +92,8 @@
 
     function selection() {
       return array('id' => $this->code,
-                   'module' => $this->public_title);
+                   'module' => $this->public_title,
+                   'image' => $this->public_image);
     }
 
     function pre_confirmation_check() {
@@ -108,7 +111,6 @@
       for ($i=$today['year']; $i < $today['year']+10; $i++) {
         $expires_year[] = array('id' => strftime('%y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
       }
-
       $confirmation = array('fields' => array(array('title' => MODULE_PAYMENT_AUTHORIZENET_CC_AIM_CREDIT_CARD_OWNER_FIRSTNAME,
                                                     'field' => tep_draw_input_field('cc_owner_firstname', $order->billing['firstname'])),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_CC_AIM_CREDIT_CARD_OWNER_LASTNAME,
@@ -116,9 +118,10 @@
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_CC_AIM_CREDIT_CARD_NUMBER,
                                                     'field' => tep_draw_input_field('cc_number_nh-dns')),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_CC_AIM_CREDIT_CARD_EXPIRES,
-                                                    'field' => tep_draw_pull_down_menu('cc_expires_month', $expires_month) . '&nbsp;' . tep_draw_pull_down_menu('cc_expires_year', $expires_year)),
+                                                    'field' => '<div class="row"><div class="col-sm-6">' . tep_draw_pull_down_menu('cc_expires_month', $expires_month) . '</div><div class="col-sm-6">' . tep_draw_pull_down_menu('cc_expires_year', $expires_year) . '</div></div>'),
                                               array('title' => MODULE_PAYMENT_AUTHORIZENET_CC_AIM_CREDIT_CARD_CCV,
-                                                    'field' => tep_draw_input_field('cc_ccv_nh-dns', '', 'size="5" maxlength="4"'))));
+                                                    'field' => tep_draw_input_field('cc_ccv_nh-dns', '', 'size="5" maxlength="4"'))),
+                            'image' => $this->public_image);
 
       return $confirmation;
     }
@@ -318,7 +321,7 @@
       if ($error !== false) {
         $this->sendDebugEmail($response);
 
-        tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, 'payment_error=' . $this->code . '&error=' . $error, 'SSL'));
+        tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, 'payment_error=' . $this->code . '&error=' . $error, 'SSL'));
       }
     }
 

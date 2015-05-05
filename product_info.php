@@ -72,6 +72,52 @@
 <div class="contentContainer">
   <div class="contentText">
 
+<ul class="bxslider">
+  <li><a class="colorbox" rel="gal" href="images/1021_royalblue_l.jpg"><img src="images/1021_royalblue_l.jpg" /></a></li>
+  <li><a class="colorbox" rel="gal" href="images/1021_navy_l.jpg"><img src="images/1021_navy_l.jpg" /></a></li>
+  <li><a class="colorbox" rel="gal" href="images/1021_red_l.jpg"><img src="images/1021_red_l.jpg" /></a></li>
+</ul>
+
+<div id="bx-pager">
+  <a data-slide-index="0" href=""><img src="images/1021_royalblue.jpg" /></a>
+  <a data-slide-index="1" href=""><img src="images/1021_navy.jpg" /></a>
+  <a data-slide-index="2" href=""><img src="images/1021_red.jpg" /></a>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('a.colorbox').zoom().click(function(){
+      $('a.colorbox').colorbox({rel: 'gal'});
+    });
+});
+/*
+$("a.colorbox").colorbox({
+  rel:'gal'
+});
+/*
+.hover(function() {
+$("a[rel^='gal']").jqzoom({
+  zoomType: 'standardzoom',
+  title: false,
+  lens: false,
+  //showEffect: 'fadein',
+  //hideEffect: 'fadeout',
+  //fadeinSpeed: 'fast',
+  //fadeoutSpeed: 'fast',
+  zoomWidth: 580,
+  zoomHeight: 580
+})
+});
+*/
+$('.bxslider').bxSlider({
+  pagerCustom: '#bx-pager',
+  mode: 'fade',
+  controls: false,
+  slideWidth: 400
+});
+
+</script>
+
+
 <?php
     if (tep_not_null($product_info['products_image'])) {
       $photoset_layout = '1';

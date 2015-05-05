@@ -54,7 +54,7 @@
 
   <div class="contentText">
     <div class="panel panel-info">
-      <div class="panel-heading"><strong><?php echo TEXT_ORDER_NUMBER . ' ' . $history['orders_id'] . ' <span class="contentText">(' . $history['orders_status_name'] . ')</span>'; ?></strong></div>
+      <div class="panel-heading"><strong><?php echo TEXT_ORDER_NUMBER . ' ' . $history['orders_id'] . ' <span class="contentText">(' . $history['orders_status_name'] . ')</span>'; ?></strong><?php echo tep_draw_button(SMALL_IMAGE_BUTTON_VIEW, 'glyphicon glyphicon-file', tep_href_link(FILENAME_ACCOUNT_HISTORY_INFO, (isset($HTTP_GET_VARS['page']) ? 'page=' . $HTTP_GET_VARS['page'] . '&' : '') . 'order_id=' . $history['orders_id'], 'SSL'), 'primary', NULL, 'btn-info btn-xs pull-right'); ?></div>
       <div class="panel-body">
         <div class="row">
           <div class="col-sm-6"><?php echo '<strong>' . TEXT_ORDER_DATE . '</strong> ' . tep_date_long($history['date_purchased']) . '<br /><strong>' . $order_type . '</strong> ' . tep_output_string_protected($order_name); ?></div>
@@ -62,7 +62,6 @@
           <div class="col-sm-6"><?php echo '<strong>' . TEXT_ORDER_PRODUCTS . '</strong> ' . $products['count'] . '<br /><strong>' . TEXT_ORDER_COST . '</strong> ' . strip_tags($history['order_total']); ?></div>
         </div>
       </div>
-      <div class="panel-footer"><?php echo tep_draw_button(SMALL_IMAGE_BUTTON_VIEW, 'glyphicon glyphicon-file', tep_href_link(FILENAME_ACCOUNT_HISTORY_INFO, (isset($HTTP_GET_VARS['page']) ? 'page=' . $HTTP_GET_VARS['page'] . '&' : '') . 'order_id=' . $history['orders_id'], 'SSL'), 'primary', NULL, 'btn-primary btn-xs'); ?></div>
     </div>
   </div>
 

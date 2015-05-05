@@ -75,6 +75,11 @@
 
   $breadcrumb->add(NAVBAR_TITLE, tep_href_link(FILENAME_LOGIN, '', 'SSL'));
 
+  header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+  header("cache-Control: no-cache");
+  header("cache-control: no-store");
+  header("pragma: no-cache");
+
   require(DIR_WS_INCLUDES . 'template_top.php');
 ?>
 

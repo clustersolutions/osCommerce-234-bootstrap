@@ -47,8 +47,58 @@
 
   <div class="contentText">
 
+    <h2><?php echo HEADING_ORDER_HISTORY; ?></h2>
+
+    <ul class="timeline">
+      <?php
+      $statuses_query = tep_db_query("select os.orders_status_name, osh.date_added, osh.comments from " . TABLE_ORDERS_STATUS . " os, " . TABLE_ORDERS_STATUS_HISTORY . " osh where osh.orders_id = '" . (int)$HTTP_GET_VARS['order_id'] . "' and osh.orders_status_id = os.orders_status_id and os.language_id = '" . (int)$languages_id . "' and os.public_flag = '1' order by osh.date_added");
+      while ($statuses = tep_db_fetch_array($statuses_query)) {
+      ?>
+        <li>
+          <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div>
+          <div class="timeline-panel">
+            <div class="timeline-heading">
+              <p class="pull-right"><span class="text-muted"><i class="glyphicon glyphicon-time"></i><?php echo tep_date_short($statuses['date_added']); ?></span></p><h4 class="timeline-title"><?php echo $statuses['orders_status_name']; ?></h4>
+            </div>
+            <div class="timeline-body">
+              <p><?php echo (empty($statuses['comments']) ? '&nbsp;' : '<blockquote>' . nl2br(tep_output_string_protected($statuses['comments'])) . '</blockquote>'); ?></p>
+            </div>
+          </div>
+        </li>
+      <?php
+      }
+      ?>
+    </ul>
+  <?php echo '<p><strong>' . HEADING_ORDER_DATE . '</strong> ' . tep_date_long($order->info['date_purchased']) . '</p>'; ?>
+
+  <div class="row">
+    <?php
+    if ($order->delivery != false) {
+    ?>
+    <div class="col-sm-6">
+      <div class="panel panel-info">
+        <div class="panel-heading"><?php echo '<strong>' . HEADING_DELIVERY_ADDRESS . '</strong>'; ?></div>
+        <div class="panel-body">
+          <?php echo tep_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?>
+        </div>
+      </div>
+    </div>
+      <?php
+    }
+    ?>
+    <div class="col-sm-6">
+      <div class="panel panel-warning">
+        <div class="panel-heading"><?php echo '<strong>' . HEADING_BILLING_ADDRESS . '</strong>'; ?></div>
+        <div class="panel-body">
+          <?php echo tep_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
     <div class="panel panel-default">
-      <div class="panel-heading"><strong><?php echo sprintf(HEADING_ORDER_NUMBER, $HTTP_GET_VARS['order_id']) . ' <span class="badge pull-right">' . $order->info['orders_status'] . '</span>'; ?></strong></div>
+      <div class="panel-heading"><strong><?php echo sprintf(HEADING_ORDER_NUMBER, $HTTP_GET_VARS['order_id']) . '</strong><span class="badge pull-right">' . $order->info['orders_status'] . '</span>'; ?></div>
       <div class="panel-body">
 
         <table border="0" width="100%" cellspacing="0" cellpadding="2" class="table-hover order_confirmation">
@@ -97,96 +147,20 @@
 <?php
   for ($i=0, $n=sizeof($order->totals); $i<$n; $i++) {
     echo '          <tr>' . "\n" .
-         '            <td align="right" width="100%">' . $order->totals[$i]['title'] . '&nbsp;</td>' . "\n" .
-         '            <td align="right">' . $order->totals[$i]['text'] . '</td>' . "\n" .
+         '            <td align="right">' . $order->totals[$i]['title'] . '&nbsp;</td>' . "\n" .
+         '            <td align="right" width="80px">' . $order->totals[$i]['text'] . '</td>' . "\n" .
          '          </tr>' . "\n";
   }
 ?>
         </table>
       </div>
-
-
       <div class="panel-footer">
-        <span class="pull-right hidden-xs"><?php echo HEADING_ORDER_TOTAL . ' ' . $order->info['total']; ?></span><?php echo HEADING_ORDER_DATE . ' ' . tep_date_long($order->info['date_purchased']); ?>
+        <?php echo '<strong>' . HEADING_PAYMENT_METHOD . ': </strong>' . $order->info['payment_method']; ?>
       </div>
     </div>
   </div>
 
   <div class="clearfix"></div>
-
-  <div class="row">
-    <?php
-    if ($order->delivery != false) {
-      ?>
-      <div class="col-sm-4">
-        <div class="panel panel-info">
-          <div class="panel-heading"><?php echo '<strong>' . HEADING_DELIVERY_ADDRESS . '</strong>'; ?></div>
-          <div class="panel-body">
-            <?php echo tep_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?>
-          </div>
-        </div>
-      </div>
-      <?php
-    }
-    ?>
-    <div class="col-sm-4">
-      <div class="panel panel-warning">
-        <div class="panel-heading"><?php echo '<strong>' . HEADING_BILLING_ADDRESS . '</strong>'; ?></div>
-        <div class="panel-body">
-          <?php echo tep_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <?php
-      if ($order->info['shipping_method']) {
-        ?>
-        <div class="panel panel-info">
-          <div class="panel-heading"><?php echo '<strong>' . HEADING_SHIPPING_METHOD . '</strong>'; ?></div>
-          <div class="panel-body">
-            <?php echo $order->info['shipping_method']; ?>
-          </div>
-        </div>
-        <?php
-      }
-      ?>
-      <div class="panel panel-warning">
-        <div class="panel-heading"><?php echo '<strong>' . HEADING_PAYMENT_METHOD . '</strong>'; ?></div>
-        <div class="panel-body">
-          <?php echo $order->info['payment_method']; ?>
-        </div>
-      </div>
-    </div>
-
-
-  </div>
-
-  <hr>
-
-  <h2><?php echo HEADING_ORDER_HISTORY; ?></h2>
-
-  <div class="clearfix"></div>
-  
-  <div class="contentText">
-    <ul class="timeline">
-      <?php
-      $statuses_query = tep_db_query("select os.orders_status_name, osh.date_added, osh.comments from " . TABLE_ORDERS_STATUS . " os, " . TABLE_ORDERS_STATUS_HISTORY . " osh where osh.orders_id = '" . (int)$HTTP_GET_VARS['order_id'] . "' and osh.orders_status_id = os.orders_status_id and os.language_id = '" . (int)$languages_id . "' and os.public_flag = '1' order by osh.date_added");
-      while ($statuses = tep_db_fetch_array($statuses_query)) {
-        echo '<li>';
-        echo '  <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div>';
-        echo '  <div class="timeline-panel">';
-        echo '    <div class="timeline-heading">';
-        echo '      <p class="pull-right"><small class="text-muted"><i class="glyphicon glyphicon-time"></i> ' . tep_date_short($statuses['date_added']) . '</small></p><h2 class="timeline-title">' . $statuses['orders_status_name'] . '</h2>';
-        echo '    </div>';
-        echo '    <div class="timeline-body">';
-        echo '      <p>' . (empty($statuses['comments']) ? '&nbsp;' : '<blockquote>' . nl2br(tep_output_string_protected($statuses['comments'])) . '</blockquote>') . '</p>';
-        echo '    </div>';
-        echo '  </div>';
-        echo '</li>';
-      }
-      ?>
-    </ul>
-  </div>
 
 <?php
   if (DOWNLOAD_ENABLED == 'true') include(DIR_WS_MODULES . 'downloads.php');

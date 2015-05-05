@@ -237,4 +237,8 @@
                         array('title' => TEXT_CACHE_MANUFACTURERS, 'code' => 'manufacturers', 'file' => 'manufacturers_box-language.cache', 'multiple' => true),
                         array('title' => TEXT_CACHE_ALSO_PURCHASED, 'code' => 'also_purchased', 'file' => 'also_purchased-language.cache', 'multiple' => true)
                        );
+
+// LINE ADDED - MOD: CCGV CREDIT CLASS Gift Voucher Contribution
+  require(DIR_WS_FUNCTIONS . 'add_ccgvdc_application_top.php');  // ICW CREDIT CLASS Gift Voucher Addition
+  require(DIR_WS_LANGUAGES . $language . '/add_ccgvdc.php'); // ICW CREDIT CLASS Gift Voucher Addition
 ?>

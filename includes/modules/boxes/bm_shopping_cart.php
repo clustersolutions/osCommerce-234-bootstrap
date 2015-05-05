@@ -31,9 +31,37 @@
     }
 
     function execute() {
-      global $cart, $new_products_id_in_cart, $currencies, $oscTemplate;
+      // global $cart, $new_products_id_in_cart, $currencies, $oscTemplate;
 
-      $cart_contents_string = '';
+      /* CCGV - BEGIN */
+      global $cart, $new_products_id_in_cart, $currencies, $oscTemplate, $customer_id;
+
+      //$cart_contents_string = '';
+
+        $cart_contents_string ="<script language=\"javascript\">function couponpopupWindow(url) {window.open(url,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=280,screenX=150,screenY=150,top=150,left=150')}//--></script>";
+
+        if (tep_session_is_registered('customer_id')) {
+          $gv_query = tep_db_query("select amount from " . TABLE_COUPON_GV_CUSTOMER . " where customer_id = '" . (int)$customer_id . "'");
+          $gv_result = tep_db_fetch_array($gv_query);
+          if ($gv_result['amount'] > 0 ) {
+            $gv_contents_string = '<div class="ui-widget-content infoBoxContents"><div style="float:left;">' . VOUCHER_BALANCE . '</div><div style="float:right;">' . $currencies->format($gv_result['amount']) . '</div><div style="clear:both;"></div>';
+            $gv_contents_string .= '<div style="text-align:center; width:100%; margin:auto;"><a href="'. tep_href_link(FILENAME_GV_SEND) . '">' . BOX_SEND_TO_FRIEND . '</a></div></div>';
+          }
+        }
+        if (tep_session_is_registered('gv_id')) {
+          $gv_query = tep_db_query("select coupon_amount from " . TABLE_COUPONS . " where coupon_id = '" . $gv_id . "'");
+          $coupon = tep_db_fetch_array($gv_query);
+          $gv_contents_string = '<div style="text-align:center; width:100%; margin:auto;">' . VOUCHER_REDEEMED . '</td><td class="smalltext" align="right" valign="bottom">' . $currencies->format($coupon['coupon_amount']) . '</div>';
+        }
+        if (tep_session_is_registered('cc_id') && $cc_id) {
+          $coupon_query = tep_db_query("select * from " . TABLE_COUPONS . " where coupon_id = '" . $cc_id . "'");
+          $coupon = tep_db_fetch_array($coupon_query);
+          $coupon_desc_query = tep_db_query("select * from " . TABLE_COUPONS_DESCRIPTION . " where coupon_id = '" . $cc_id . "' and language_id = '" . $languages_id . "'");
+          $coupon_desc = tep_db_fetch_array($coupon_desc_query);
+          $text_coupon_help = sprintf("%s",$coupon_desc['coupon_name']);
+          $gv_contents_string = '<div style="text-align:center; width:100%; margin:auto;">' . CART_COUPON . $text_coupon_help . '<br>' . '</div>';
+        }
+/* CCGV - END */
 
       if ($cart->count_contents() > 0) {
         $cart_contents_string = NULL;

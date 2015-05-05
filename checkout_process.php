@@ -14,8 +14,14 @@
 
 // if the customer is not logged on, redirect them to the login page
   if (!tep_session_is_registered('customer_id')) {
-    $navigation->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_PAYMENT));
+    $navigation->set_snapshot(array('mode' => 'SSL', 'page' => FILENAME_CHECKOUT_CONFIRMATION));
     tep_redirect(tep_href_link(FILENAME_LOGIN, '', 'SSL'));
+  }
+
+// let's not lose  comment should redirect happens...Cluster Solutions 12-09-2014
+  if (!tep_session_is_registered('comments')) tep_session_register('comments');
+  if (isset($HTTP_POST_VARS['comments']) && tep_not_null($HTTP_POST_VARS['comments'])) {
+    $comments = tep_db_prepare_input($HTTP_POST_VARS['comments']);
   }
 
 // if there is nothing in the customers cart, redirect them to the shopping cart page
@@ -29,7 +35,7 @@
   }
 
   if ( (tep_not_null(MODULE_PAYMENT_INSTALLED)) && (!tep_session_is_registered('payment')) ) {
-    tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL'));
+    tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, '', 'SSL'));
  }
 
 // avoid hack attempts during the checkout procedure by checking the internal cartID
@@ -43,7 +49,12 @@
 
 // load selected payment module
   require(DIR_WS_CLASSES . 'payment.php');
+  //$payment_modules = new payment($payment);
+
+/* CCGV - BEGIN */
+  if ($credit_covers) $payment='';
   $payment_modules = new payment($payment);
+/* CCGV - END */
 
 // load the selected shipping module
   require(DIR_WS_CLASSES . 'shipping.php');
@@ -68,8 +79,14 @@
 
   $payment_modules->update_status();
 
-  if ( ($payment_modules->selected_module != $payment) || ( is_array($payment_modules->modules) && (sizeof($payment_modules->modules) > 1) && !is_object($$payment) ) || (is_object($$payment) && ($$payment->enabled == false)) ) {
-    tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_PAYMENT_MODULE_SELECTED), 'SSL'));
+//  if ( ($payment_modules->selected_module != $payment) || ( is_array($payment_modules->modules) && (sizeof($payment_modules->modules) > 1) && !is_object($$payment) ) || (is_object($$payment) && ($$payment->enabled == false)) ) {
+//    tep_redirect(tep_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . urlencode(ERROR_NO_PAYMENT_MODULE_SELECTED), 'SSL'));
+//  }
+
+/* CCGV - BEGIN */
+  if (((is_array($payment_modules->modules)) && (sizeof($payment_modules->modules) > 1) && !is_object($$payment)  && (!$credit_covers)) || (is_object($$payment) && ($$payment->enabled == false)) ) {
+/* CCGV - END */
+    tep_redirect(tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, 'error_message=' . urlencode(ERROR_NO_PAYMENT_MODULE_SELECTED), 'SSL'));
   }
 
   require(DIR_WS_CLASSES . 'order_total.php');
@@ -79,6 +96,12 @@
 
 // load the before_process function from the payment modules
   $payment_modules->before_process();
+
+  if ($credit_covers) {
+    $order->info['payment_method'] = 'Promo/Credit';
+  } else {
+    $order->info['payment_method'] = $order->info['payment_method'];
+  }
 
   $sql_data_array = array('customers_id' => $customer_id,
                           'customers_name' => $order->customer['firstname'] . ' ' . $order->customer['lastname'],
@@ -197,6 +220,10 @@
     tep_db_perform(TABLE_ORDERS_PRODUCTS, $sql_data_array);
     $order_products_id = tep_db_insert_id();
 
+/* CCGV - BEGIN */
+  $order_total_modules->update_credit_account($i,$insert_id);
+/* CCGV - END */
+
 //------insert customer choosen option to order--------
     $attributes_exist = '0';
     $products_ordered_attributes = '';
@@ -244,6 +271,10 @@
     $products_ordered .= $order->products[$i]['qty'] . ' x ' . $order->products[$i]['name'] . ' (' . $order->products[$i]['model'] . ') = ' . $currencies->display_price($order->products[$i]['final_price'], $order->products[$i]['tax'], $order->products[$i]['qty']) . $products_ordered_attributes . "\n";
   }
 
+/* CCGV - BEGIN */
+  $order_total_modules->apply_credit();
+/* CCGV - END */
+
 // lets start with the email confirmation
   $email_order = STORE_NAME . "\n" . 
                  EMAIL_SEPARATOR . "\n" . 
@@ -275,12 +306,17 @@
     $email_order .= EMAIL_TEXT_PAYMENT_METHOD . "\n" . 
                     EMAIL_SEPARATOR . "\n";
     $payment_class = $$payment;
+    if ($credit_covers) {
+      $order->info['payment_method'] = 'Promo/Credit';
+    } else {
+      $order->info['payment_method'] = 'Credit Card';
+    }
     $email_order .= $order->info['payment_method'] . "\n\n";
     if (isset($payment_class->email_footer)) {
       $email_order .= $payment_class->email_footer . "\n\n";
     }
   }
-  tep_mail($order->customer['firstname'] . ' ' . $order->customer['lastname'], $order->customer['email_address'], EMAIL_TEXT_SUBJECT, $email_order, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
+  tep_mail($order->customer['firstname'] . ' ' . $order->customer['lastname'], $order->customer['email_address'], EMAIL_TEXT_SUBJECT . $insert_id, $email_order, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
 
 // send emails to other people
   if (SEND_EXTRA_ORDER_EMAILS_TO != '') {
@@ -299,7 +335,12 @@
   tep_session_unregister('payment');
   tep_session_unregister('comments');
 
-  tep_redirect(tep_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL'));
+/* CCGV - BEGIN */
+  if(tep_session_is_registered('credit_covers')) tep_session_unregister('credit_covers');
+  $order_total_modules->clear_posts();
+/* CCGV - END */
+
+  tep_redirect(tep_href_link(FILENAME_CHECKOUT_SUCCESS, 'oid=' . $insert_id, 'SSL'));
 
   require(DIR_WS_INCLUDES . 'application_bottom.php');
 ?>

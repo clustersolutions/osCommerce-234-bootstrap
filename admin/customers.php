@@ -5,12 +5,16 @@
   osCommerce, Open Source E-Commerce Solutions
   http://www.oscommerce.com
 
-  Copyright (c) 2013 osCommerce
+  Copyright (c) 2010 osCommerce
 
   Released under the GNU General Public License
 */
 
   require('includes/application_top.php');
+/* CCGV (fnzb) - BEGIN */
+  require(DIR_WS_CLASSES . 'currencies.php');
+  $currencies = new currencies();
+/* CCGV (fnzb) - END */
 
   $action = (isset($HTTP_GET_VARS['action']) ? $HTTP_GET_VARS['action'] : '');
 
@@ -172,7 +176,9 @@
                                 'entry_street_address' => $entry_street_address,
                                 'entry_postcode' => $entry_postcode,
                                 'entry_city' => $entry_city,
-                                'entry_country_id' => $entry_country_id);
+                                'entry_country_id' => $entry_country_id,
+                                'entry_telephone' => $customers_telephone,
+                                'entry_fax' => $customers_fax);
 
         if (ACCOUNT_COMPANY == 'true') $sql_data_array['entry_company'] = $entry_company;
         if (ACCOUNT_SUBURB == 'true') $sql_data_array['entry_suburb'] = $entry_suburb;
@@ -218,10 +224,14 @@
         tep_db_query("delete from " . TABLE_CUSTOMERS_BASKET_ATTRIBUTES . " where customers_id = '" . (int)$customers_id . "'");
         tep_db_query("delete from " . TABLE_WHOS_ONLINE . " where customer_id = '" . (int)$customers_id . "'");
 
+// social login start		
+	tep_db_query("delete from " . TABLE_USERS . " where customers_id = '" . (int)$customers_id . "'");
+// social login end
+
         tep_redirect(tep_href_link(FILENAME_CUSTOMERS, tep_get_all_get_params(array('cID', 'action'))));
         break;
       default:
-        $customers_query = tep_db_query("select c.customers_id, c.customers_gender, c.customers_firstname, c.customers_lastname, c.customers_dob, c.customers_email_address, a.entry_company, a.entry_street_address, a.entry_suburb, a.entry_postcode, a.entry_city, a.entry_state, a.entry_zone_id, a.entry_country_id, c.customers_telephone, c.customers_fax, c.customers_newsletter, c.customers_default_address_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a on c.customers_default_address_id = a.address_book_id where a.customers_id = c.customers_id and c.customers_id = '" . (int)$HTTP_GET_VARS['cID'] . "'");
+        $customers_query = tep_db_query("select c.customers_id, c.customers_gender, c.customers_firstname, c.customers_lastname, c.customers_dob, c.customers_email_address, a.entry_company, a.entry_street_address, a.entry_suburb, a.entry_postcode, a.entry_city, a.entry_state, a.entry_zone_id, a.entry_country_id, a.entry_telephone, a.entry_fax, c.customers_telephone, c.customers_fax, c.customers_newsletter, c.customers_default_address_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a on c.customers_default_address_id = a.address_book_id where a.customers_id = c.customers_id and c.customers_id = '" . (int)$HTTP_GET_VARS['cID'] . "'");
         $customers = tep_db_fetch_array($customers_query);
         $cInfo = new objectInfo($customers);
     }
@@ -607,12 +617,12 @@ function check_form() {
 <?php
   if ($error == true) {
     if ($entry_telephone_error == true) {
-      echo tep_draw_input_field('customers_telephone', $cInfo->customers_telephone, 'maxlength="32"') . '&nbsp;' . ENTRY_TELEPHONE_NUMBER_ERROR;
+      echo tep_draw_input_field('customers_telephone', $cInfo->entry_telephone, 'maxlength="32"') . '&nbsp;' . ENTRY_TELEPHONE_NUMBER_ERROR;
     } else {
-      echo $cInfo->customers_telephone . tep_draw_hidden_field('customers_telephone');
+      echo $cInfo->entry_telephone . tep_draw_hidden_field('customers_telephone');
     }
   } else {
-    echo tep_draw_input_field('customers_telephone', $cInfo->customers_telephone, 'maxlength="32"', true);
+    echo tep_draw_input_field('customers_telephone', $cInfo->entry_telephone, 'maxlength="32"', true);
   }
 ?></td>
           </tr>
@@ -621,9 +631,9 @@ function check_form() {
             <td class="main">
 <?php
   if ($processed == true) {
-    echo $cInfo->customers_fax . tep_draw_hidden_field('customers_fax');
+    echo $cInfo->entry_fax . tep_draw_hidden_field('customers_fax');
   } else {
-    echo tep_draw_input_field('customers_fax', $cInfo->customers_fax, 'maxlength="32"');
+    echo tep_draw_input_field('customers_fax', $cInfo->entry_fax, 'maxlength="32"');
   }
 ?></td>
           </tr>
@@ -681,6 +691,10 @@ function check_form() {
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_LASTNAME; ?></td>
                 <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_FIRSTNAME; ?></td>
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACCOUNT_CREATED; ?></td>
+                <!-- CCGV (fnzb) - BEGIN -->
+                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STORE_CREDIT; ?></td>
+                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STORE_CREDIT_REDEEMED; ?></td>
+                <!-- CCGV (fnzb) - END -->
                 <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
               </tr>
 <?php
@@ -689,12 +703,25 @@ function check_form() {
       $keywords = tep_db_input(tep_db_prepare_input($HTTP_GET_VARS['search']));
       $search = "where c.customers_lastname like '%" . $keywords . "%' or c.customers_firstname like '%" . $keywords . "%' or c.customers_email_address like '%" . $keywords . "%'";
     }
-    $customers_query_raw = "select c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, a.entry_country_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id " . $search . " order by c.customers_lastname, c.customers_firstname";
-    $customers_split = new splitPageResults($HTTP_GET_VARS['page'], MAX_DISPLAY_SEARCH_RESULTS, $customers_query_raw, $customers_query_numrows);
+    //$customers_query_raw = "select c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, a.entry_country_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id " . $search . " order by c.customers_lastname, c.customers_firstname";
+    $search .= (tep_not_null($search) ? ' and c.customers_id = ci.customers_info_id' : ' where c.customers_id = ci.customers_info_id'); 
+    $customers_query_raw = "select distinct c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, a.entry_country_id from " . TABLE_CUSTOMERS . " c left join " . TABLE_ADDRESS_BOOK . " a on c.customers_id = a.customers_id and c.customers_default_address_id = a.address_book_id, " . TABLE_CUSTOMERS_INFO . " ci " . $search . " order by ci.customers_info_date_account_created desc";
+    $customers_split = new splitPageResults($HTTP_GET_VARS['page'], 5*MAX_DISPLAY_SEARCH_RESULTS, $customers_query_raw, $customers_query_numrows);
     $customers_query = tep_db_query($customers_query_raw);
     while ($customers = tep_db_fetch_array($customers_query)) {
       $info_query = tep_db_query("select customers_info_date_account_created as date_account_created, customers_info_date_account_last_modified as date_account_last_modified, customers_info_date_of_last_logon as date_last_logon, customers_info_number_of_logons as number_of_logons from " . TABLE_CUSTOMERS_INFO . " where customers_info_id = '" . $customers['customers_id'] . "'");
       $info = tep_db_fetch_array($info_query);
+
+          /* CCGV (fnzb) - BEGIN */
+          $store_credit = '';
+          $store_credit_redeemed = '';
+      $store_credit_query = tep_db_query("select * from " . TABLE_COUPON_GV_CUSTOMER . " where customer_id = '" . $customers['customers_id'] . "' LIMIT 1");
+          while ($store_credits = tep_db_fetch_array($store_credit_query)) {
+                  $store_credit = $currencies->format($store_credits['amount']);
+                  $store_credit_redeemed =  $currencies->format($store_credits['amount_redeemed']);
+          }
+
+          /* CCGV (fnzb) - END */
 
       if ((!isset($HTTP_GET_VARS['cID']) || (isset($HTTP_GET_VARS['cID']) && ($HTTP_GET_VARS['cID'] == $customers['customers_id']))) && !isset($cInfo)) {
         $country_query = tep_db_query("select countries_name from " . TABLE_COUNTRIES . " where countries_id = '" . (int)$customers['entry_country_id'] . "'");
@@ -715,9 +742,13 @@ function check_form() {
         echo '          <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link(FILENAME_CUSTOMERS, tep_get_all_get_params(array('cID')) . 'cID=' . $customers['customers_id']) . '\'">' . "\n";
       }
 ?>
-                <td class="dataTableContent"><?php echo $customers['customers_lastname']; ?></td>
+                <td class="dataTableContent"><?php echo (tep_customers_fbuser($customers['customers_id']) ? tep_image(DIR_WS_IMAGES . 'facebook.png', 'FBLogin', 12, 12) . '&nbsp;' : tep_draw_separator('pixel_trans.gif', 12, 12) . '&nbsp;') . $customers['customers_lastname']; ?></td>
                 <td class="dataTableContent"><?php echo $customers['customers_firstname']; ?></td>
                 <td class="dataTableContent" align="right"><?php echo tep_date_short($info['date_account_created']); ?></td>
+                <!-- CCGV (fnzb) - BEGIN -->
+                <td class="dataTableContent" align="right"><?php echo $store_credit; ?></td>
+                <td class="dataTableContent" align="right"><?php echo $store_credit_redeemed; ?></td>
+                <!-- CCGV (fnzb) - END -->
                 <td class="dataTableContent" align="right"><?php if (isset($cInfo) && is_object($cInfo) && ($customers['customers_id'] == $cInfo->customers_id)) { echo tep_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link(FILENAME_CUSTOMERS, tep_get_all_get_params(array('cID')) . 'cID=' . $customers['customers_id']) . '">' . tep_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
@@ -726,8 +757,8 @@ function check_form() {
               <tr>
                 <td colspan="4"><table border="0" width="100%" cellspacing="0" cellpadding="2">
                   <tr>
-                    <td class="smallText" valign="top"><?php echo $customers_split->display_count($customers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $HTTP_GET_VARS['page'], TEXT_DISPLAY_NUMBER_OF_CUSTOMERS); ?></td>
-                    <td class="smallText" align="right"><?php echo $customers_split->display_links($customers_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $HTTP_GET_VARS['page'], tep_get_all_get_params(array('page', 'info', 'x', 'y', 'cID'))); ?></td>
+                    <td class="smallText" valign="top"><?php echo $customers_split->display_count($customers_query_numrows, 5*MAX_DISPLAY_SEARCH_RESULTS, $HTTP_GET_VARS['page'], TEXT_DISPLAY_NUMBER_OF_CUSTOMERS); ?></td>
+                    <td class="smallText" align="right"><?php echo $customers_split->display_links($customers_query_numrows, 5*MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $HTTP_GET_VARS['page'], tep_get_all_get_params(array('page', 'info', 'x', 'y', 'cID'))); ?></td>
                   </tr>
 <?php
     if (isset($HTTP_GET_VARS['search']) && tep_not_null($HTTP_GET_VARS['search'])) {
