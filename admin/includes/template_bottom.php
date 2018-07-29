@@ -48,6 +48,7 @@
 	);
 </script>
 <?php require('includes/footer.php'); ?>
+<?php echo $oscTemplate->getBlocks('footer_scripts'); ?>
 
 </body>
 </html>

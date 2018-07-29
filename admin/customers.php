@@ -228,16 +228,30 @@
   }
 
   require('includes/template_top.php');
-        echo tep_draw_form('search', 'customers.php', '', 'get', 'class="form-inline float-right"');
-		echo HEADING_TITLE_SEARCH . ' ' . tep_draw_input_field('search'); ?><?php echo tep_hide_session_id();
+?>
+<div class="page-header">
+
+    <?php echo tep_draw_form('search', 'customers.php', '', 'get'); ?>
+        <div class="input-group col-md-3 float-right p-1">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><?php echo HEADING_TITLE_SEARCH; ?></span>
+            </div>
+        <?php echo tep_draw_input_field('search'); ?>
+        
+        </div>
+        <?php echo tep_hide_session_id(); ?>
+<?php  
     if (isset($_GET['search']) && tep_not_null($_GET['search'])) {
 ?>
 	<div class="float-right"><?php echo tep_draw_button(IMAGE_RESET, 'arrowrefresh-1-w', tep_href_link('customers.php')); ?></div>
 <?php
     }
-		echo '</form>';
+		echo '</form>'
+                .'<h1>' . HEADING_TITLE . '</h1>'
+                .'</div>';        
   if ($action == 'edit' || $action == 'update') {
 ?>
+
 <script type="text/javascript"><!--
 
 function check_form() {
@@ -335,9 +349,7 @@ function check_form() {
 <?php
   }
 ?>
-<div class="page-header">
-	<h1><?php echo HEADING_TITLE; ?></h1>
-</div>
+
 <div class="row">
 
 <?php
@@ -684,9 +696,9 @@ function check_form() {
       }
 
       if (isset($cInfo) && is_object($cInfo) && ($customers['customers_id'] == $cInfo->customers_id)) {
-        echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('customers.php', tep_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit') . '\'">' . "\n";
+        echo '<tr id="defaultSelected" class="table-primary" onclick="document.location.href=\'' . tep_href_link('customers.php', tep_get_all_get_params(array('cID', 'action')) . 'cID=' . $cInfo->customers_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('customers.php', tep_get_all_get_params(array('cID')) . 'cID=' . $customers['customers_id']) . '\'">' . "\n";
+        echo '<tr class="dataTableRow" onclick="document.location.href=\'' . tep_href_link('customers.php', tep_get_all_get_params(array('cID')) . 'cID=' . $customers['customers_id']) . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo $customers['customers_lastname']; ?></td>

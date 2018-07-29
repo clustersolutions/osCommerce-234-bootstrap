@@ -21,7 +21,10 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <!-- <link href="<?php echo tep_catalog_href_link('ext/bootstrap/css/bootstrap.min.css', '', 'SSL'); ?>" rel="stylesheet">-->
 <link rel="stylesheet" href="<?php echo tep_catalog_href_link('ext/datepicker/css/datepicker.css', '', 'SSL'); ?>">
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
+<?php
+ $mtime = filemtime('includes/stylesheet.css');
+?>
+<link rel="stylesheet" type="text/css" href="includes/stylesheet.css?mod=<?php echo $mtime; ?>">
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <!--[if IE]><script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/flot/excanvas.min.js', '', 'SSL'); ?>"></script><![endif]-->

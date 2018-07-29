@@ -579,7 +579,6 @@ updateGross();
 <?php
     }
 ?>
-
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_QUANTITY; ?></td>
             <td class="main"><?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . tep_draw_input_field('products_quantity', $pInfo->products_quantity); ?></td>
@@ -674,13 +673,12 @@ function showPiDelConfirm(piId) {
 <?php
     }
 ?>
-
           <tr>
             <td class="main"><?php echo TEXT_PRODUCTS_WEIGHT; ?></td>
             <td class="main"><?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . tep_draw_input_field('products_weight', $pInfo->products_weight); ?></td>
           </tr>
 
-          <?php
+<?php 
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 ?>
           <tr bgcolor="#eeeeee">
@@ -696,7 +694,7 @@ function showPiDelConfirm(piId) {
     }
 ?>
 
-          <?php
+<?php
     for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
 ?>
           <tr bgcolor="#eeeeee">
@@ -799,21 +797,30 @@ $('#products_date_available').datepicker({
   } else {
 ?>
 <div class="page-header">
+    <?php echo tep_draw_form('search', 'categories.php', '', 'get'); ?>
+        <div class="input-group col-md-3 float-right p-1">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><?php echo HEADING_TITLE_SEARCH; ?></span>
+            </div>
+        <?php echo tep_draw_input_field('search'); ?>
+        
+        </div>
+        <?php echo tep_hide_session_id(); ?>
+    </form>    
+     <?php echo tep_draw_form('goto', 'categories.php', '', 'get'); ?>
+        <div class="input-group col-md-4 float-right p-1">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><?php echo HEADING_TITLE_GOTO; ?></span>
+            </div>
+        <?php echo tep_draw_pull_down_menu('cPath', tep_get_category_tree(), $current_category_id, 'onchange="this.form.submit();"'); ?>
+        
+        </div>
+        <?php echo tep_hide_session_id(); ?>
+    </form>   
+    
     <h1><?php echo HEADING_TITLE; ?></h1>
 </div>
-<div class="row">	
-
-<?php
-   // echo tep_draw_form('search', 'categories.php', '', 'get');
-   // echo HEADING_TITLE_SEARCH . ' ' . tep_draw_input_field('search');
-   // echo tep_hide_session_id() . '</form>';
-?>
-
-<?php
-   // echo tep_draw_form('goto', 'categories.php', '', 'get');
-   // echo HEADING_TITLE_GOTO . ' ' . tep_draw_pull_down_menu('cPath', tep_get_category_tree(), $current_category_id, 'onchange="this.form.submit();"');
-   // echo tep_hide_session_id() . '</form>';
-?>
+<div class="row">
 
 	<div class="col-md-8">	
 		<table class="table table-bordered table-striped table-hover">
@@ -850,9 +857,9 @@ $('#products_date_available').datepicker({
       }
 
       if (isset($cInfo) && is_object($cInfo) && ($categories['categories_id'] == $cInfo->categories_id) ) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('categories.php', tep_get_path($categories['categories_id'])) . '\'">' . "\n";
+        echo '              <tr id="defaultSelected" class="table-primary" onclick="document.location.href=\'' . tep_href_link('categories.php', tep_get_path($categories['categories_id'])) . '\'">' . "\n";
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('categories.php', 'cPath=' . $cPath . '&cID=' . $categories['categories_id']) . '\'">' . "\n";
+        echo '              <tr class="dataTableRow" onclick="document.location.href=\'' . tep_href_link('categories.php', 'cPath=' . $cPath . '&cID=' . $categories['categories_id']) . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo '<a href="' . tep_href_link('categories.php', tep_get_path($categories['categories_id'])) . '">' . tep_image('images/icons/folder.gif', ICON_FOLDER) . '</a>&nbsp;<strong>' . $categories['categories_name'] . '</strong>'; ?></td>
@@ -884,9 +891,9 @@ $('#products_date_available').datepicker({
       }
 
       if (isset($pInfo) && is_object($pInfo) && ($products['products_id'] == $pInfo->products_id) ) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('categories.php', 'cPath=' . $cPath . '&pID=' . $products['products_id'] . '&action=new_product_preview&read=only') . '\'">' . "\n";
+        echo '              <tr id="defaultSelected" class="table-primary" onclick="document.location.href=\'' . tep_href_link('categories.php', 'cPath=' . $cPath . '&pID=' . $products['products_id'] . '&action=new_product_preview&read=only') . '\'">' . "\n";
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('categories.php', 'cPath=' . $cPath . '&pID=' . $products['products_id']) . '\'">' . "\n";
+        echo '              <tr class="dataTableRow" onclick="document.location.href=\'' . tep_href_link('categories.php', 'cPath=' . $cPath . '&pID=' . $products['products_id']) . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo '<a href="' . tep_href_link('categories.php', 'cPath=' . $cPath . '&pID=' . $products['products_id'] . '&action=new_product_preview&read=only') . '">' . tep_image('images/icons/preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . $products['products_name']; ?></td>

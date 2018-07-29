@@ -59,7 +59,7 @@
 	foreach ($cl_box_groups as $groups) {
     
         $adminAppMenu .= '  <h6 id="collapseListGroupHeading'.$counter.'" class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">';
-        $adminAppMenu .= '    <a class="d-flex align-items-center text-muted" data-toggle="collapse"  data-target="#collapseListGroup'.$counter.'" aria-expanded="false" aria-controls="collapseListGroup'.$counter.'"">';
+        $adminAppMenu .= '    <a class="d-flex align-items-center text-muted" role="button" data-toggle="collapse"  data-target="#collapseListGroup'.$counter.'" aria-expanded="false" aria-controls="collapseListGroup'.$counter.'"">';
         $adminAppMenu .= '       <span class="ml-1">' . $groups['heading'] . '</span>';
         $adminAppMenu .= '    </a>';
         $adminAppMenu .= '  </h6>';
@@ -92,27 +92,31 @@
 	} else {
 		adminCollapseAppMenuArray = JSON.parse(adminCollapseAppMenu);
 		var arrayLength = adminCollapseAppMenuArray.length;
-			for (var i = 0; i < arrayLength; i++) {
-				var panel = '#'+adminCollapseAppMenuArray[i];
-				$(panel).addClass('show');
-			}
+        for (var i = 0; i < arrayLength; i++) {
+            var panel = '#'+adminCollapseAppMenuArray[i];
+            $(panel).addClass('show');
+            $(panel).prev().find('a').attr('aria-expanded', 'true');
+        }
 	}
 	$('#adminAppMenu').on('shown.bs.collapse', '.card-collapse', function() {
 		adminCollapseAppMenu = JSON.parse(localStorage.getItem('adminCollapseAppMenu'));
 		if ($.inArray($(this).attr('id'), adminCollapseAppMenu) == -1) {
 			adminCollapseAppMenu.push($(this).attr('id'));
 		};
+        $collapse = $(this).prev().find('a').attr('data-target');
+        $($collapse).attr('aria-expanded', 'true');
 		localStorage.setItem('adminCollapseAppMenu', JSON.stringify(adminCollapseAppMenu));
 	});
 	$('#adminAppMenu').on('hidden.bs.collapse', '.card-collapse', function() {
         adminCollapseAppMenu = JSON.parse(localStorage.getItem('adminCollapseAppMenu'));
-		adminCollapseAppMenu.splice( $.inArray($(this).attr('id'), adminCollapseAppMenu), 1 ); 
-		localStorage.setItem('adminCollapseAppMenu', JSON.stringify(adminCollapseAppMenu));
+		adminCollapseAppMenu.splice( $.inArray($(this).attr('id'), adminCollapseAppMenu), 1 ); 		
+        localStorage.setItem('adminCollapseAppMenu', JSON.stringify(adminCollapseAppMenu));
 	});	
 	if ( window.location.pathname == $rootPath || window.location.pathname == $rootPath+'index.php'){ 
 		//Close panels if navigate to index
 		adminCollapseAppMenu = [];
 		localStorage.setItem('adminCollapseAppMenu', JSON.stringify(adminCollapseAppMenu));
+        $('#adminAppMenu .sidebar-heading a').attr('aria-expanded', 'false');
 		$('#adminAppMenu .card-collapse').removeClass('show');
 	}	
 </script>

@@ -101,8 +101,9 @@
   if (($action == 'edit') && ($order_exists == true)) {
     $order = new order($oID);
 ?>
-
-<h1 class="pageHeading"><?php echo HEADING_TITLE . ': #' . (int)$oID . ' (' . $order->info['total'] . ')'; ?></h1>
+  <div class="page-header">
+    <h1><?php echo HEADING_TITLE . ': #' . (int)$oID . ' (' . $order->info['total'] . ')'; ?></h1>
+  </div>
   <ul class="nav nav-tabs"  id="orderTabs" role="tablist">
     <li class="nav-item"><?php echo '<a class="nav-link active" id="section_summary_tab" data-toggle="tab" href="#section_summary_content" role="tab" aria-controls="' . TAB_TITLE_SUMMARY . '" aria-selected="true">' . TAB_TITLE_SUMMARY . '</a>'; ?></li>
     <li class="nav-item"><?php echo '<a class="nav-link" id="section_products_tab" data-toggle="tab" href="#section_products_content" role="tab" aria-controls="' . TAB_TITLE_PRODUCTS . '" aria-selected="false">' . TAB_TITLE_PRODUCTS . '</a>'; ?></li>
@@ -320,21 +321,32 @@ $('#orderTabs a').click(function (e) {
 <?php
   } else {
 ?>
-    <div class="page-header">
-        <h1><?php echo HEADING_TITLE; ?></h1>
-    </div>
+<div class="page-header">
+    <?php echo tep_draw_form('orders', 'orders.php', '', 'get'); ?>
+        <div class="input-group col-md-2 float-right p-1">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><?php echo HEADING_TITLE_SEARCH; ?></span>
+            </div>
+        <?php echo tep_draw_input_field('oID', '', 'size="12"') . tep_draw_hidden_field('action', 'edit'); ?>
+        
+        </div>
+        <?php echo tep_hide_session_id(); ?>
+    </form>
+    
+    <?php echo tep_draw_form('status', 'orders.php', '', 'get'); ?>
+        <div class="input-group col-md-3 float-right p-1">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><?php echo HEADING_TITLE_STATUS; ?></span>
+            </div>        
+        <?php echo tep_draw_pull_down_menu('status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_ORDERS)), $orders_statuses), '', 'onchange="this.form.submit();"'); ?>
+        </div>
+        
+        <?php echo tep_hide_session_id(); ?>
+        </form>    
+    
+    <h1><?php echo HEADING_TITLE; ?></h1>
+</div>
 <div class="row">
-
-        
-        <!-- <table border="0" width="100%" cellspacing="0" cellpadding="0">
-        <tr><?php echo tep_draw_form('orders', 'orders.php', '', 'get'); ?>
-        <td class="smallText" align="right"><?php echo HEADING_TITLE_SEARCH . ' ' . tep_draw_input_field('oID', '', 'size="12"') . tep_draw_hidden_field('action', 'edit'); ?></td>
-        <?php echo tep_hide_session_id(); ?></form></tr>
-        <tr><?php echo tep_draw_form('status', 'orders.php', '', 'get'); ?>
-        <td class="smallText" align="right"><?php echo HEADING_TITLE_STATUS . ' ' . tep_draw_pull_down_menu('status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_ORDERS)), $orders_statuses), '', 'onchange="this.form.submit();"'); ?></td>
-        <?php echo tep_hide_session_id(); ?></form></tr>
-        </table> -->
-        
 	<div class="col-md-8">	
 		<table class="table table-bordered table-striped table-hover">
         <thead>
@@ -364,9 +376,9 @@ $('#orderTabs a').click(function (e) {
       }
 
       if (isset($oInfo) && is_object($oInfo) && ($orders['orders_id'] == $oInfo->orders_id)) {
-        echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID', 'action')) . 'oID=' . $oInfo->orders_id . '&action=edit') . '\'">' . "\n";
+        echo '<tr id="defaultSelected" class="table-primary" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID', 'action')) . 'oID=' . $oInfo->orders_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID')) . 'oID=' . $orders['orders_id']) . '\'">' . "\n";
+        echo '<tr class="dataTableRow" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID')) . 'oID=' . $orders['orders_id']) . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo '<a href="' . tep_href_link('orders.php', tep_get_all_get_params(array('oID', 'action')) . 'oID=' . $orders['orders_id'] . '&action=edit') . '">' . tep_image('images/icons/preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . $orders['customers_name']; ?></td>
