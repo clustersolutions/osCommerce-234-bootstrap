@@ -59,16 +59,18 @@
 
   require('includes/template_top.php');
 ?>
-
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
+<div class="page-header">
+<?php	
+	if (empty($action)) {
+?>
+	<div class="float-right"><?php echo tep_draw_button(IMAGE_BUTTON_ADD_TESTIMONIAL, 'triangle-1-e', tep_href_link('testimonials.php', 'action=new')); ?></div>
+<?php
+	}
+?>	
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">	
 <?php
   if ($action == 'edit') {
     $tID = tep_db_prepare_input($_GET['tID']);
@@ -85,62 +87,53 @@
       default: $in_status = true; $out_status = false;
     }
 ?>
-      <tr><?php echo tep_draw_form('testimonial', 'testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $_GET['tID'] . '&action=update'); ?>
-        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="main" colspan="2"><strong><?php echo TEXT_INFO_TESTIMONIAL_STATUS; ?></strong> <?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . tep_draw_radio_field('testimonials_status', '1', $in_status) . '&nbsp;' . TEXT_TESTIMONIAL_PUBLISHED . '&nbsp;' . tep_draw_radio_field('testimonials_status', '0', $out_status) . '&nbsp;' . TEXT_TESTIMONIAL_NOT_PUBLISHED; ?></td>
-          </tr>
-          <tr>
-            <td class="main" valign="top"><strong><?php echo ENTRY_TESTIMONIAL; ?></strong><br /><br /><?php echo tep_draw_textarea_field('testimonials_text', 'soft', '60', '15', $tInfo->testimonials_text); ?></td>
-          </tr>
-          <tr>
-            <td class="smallText" align="right"><?php echo ENTRY_TESTIMONIAL_TEXT; ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-      </tr>      
-      <tr>
-        <td align="right" class="smallText"><?php echo tep_draw_hidden_field('testimonials_id', $tInfo->testimonials_id) . tep_draw_hidden_field('customers_name', $tInfo->customers_name) . tep_draw_hidden_field('date_added', $tInfo->date_added) . tep_draw_button(IMAGE_SAVE, 'document') . tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $_GET['tID'])); ?></td>
-      </form></tr>
+		<?php echo tep_draw_form('testimonial', 'testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $_GET['tID'] . '&action=update'); ?>
+			<table class="table table-bordered">
+				<tr>
+					<td class="main" colspan="2"><strong><?php echo TEXT_INFO_TESTIMONIAL_STATUS; ?></strong> <?php echo tep_draw_separator('pixel_trans.gif', '24', '15') . '&nbsp;' . tep_draw_radio_field('testimonials_status', '1', $in_status) . '&nbsp;' . TEXT_TESTIMONIAL_PUBLISHED . '&nbsp;' . tep_draw_radio_field('testimonials_status', '0', $out_status) . '&nbsp;' . TEXT_TESTIMONIAL_NOT_PUBLISHED; ?></td>
+				</tr>
+				<tr>
+					<td class="main" valign="top"><strong><?php echo ENTRY_TESTIMONIAL; ?></strong><br /><br /><?php echo tep_draw_textarea_field('testimonials_text', 'soft', '60', '15', $tInfo->testimonials_text); ?></td>
+				</tr>
+				<tr>
+					<td class="smallText" align="right"><?php echo ENTRY_TESTIMONIAL_TEXT; ?></td>
+				</tr>    
+			</table>
+				<nav>
+					<ul class="float-right"><?php echo tep_draw_hidden_field('testimonials_id', $tInfo->testimonials_id) . tep_draw_hidden_field('customers_name', $tInfo->customers_name) . tep_draw_hidden_field('date_added', $tInfo->date_added) . tep_draw_button(IMAGE_SAVE, 'document') . ' ' . tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $_GET['tID'])); ?></ul>
+				</nav>			
+		</form>
+	</div><!-- end col-* -->
 <?php
   } elseif ($action == 'new') {
     ?>
-      <tr><?php echo tep_draw_form('review', 'testimonials.php', 'action=addnew'); ?>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="main" valign="top" width="140"><strong><?php echo ENTRY_FROM; ?></strong></td>
-            <td><?php echo tep_draw_input_field('customer_name', '', 'style="font-size:10px; width: 240px;"'); ?></td>
-          </tr>
-          <tr>
-            <td colspan="2"><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-          </tr>
-          <tr>
-            <td class="main"  colspan="2" valign="top"><strong><?php echo ENTRY_TESTIMONIAL; ?></strong><br /><br /><?php echo tep_draw_textarea_field('testimonials_text', 'soft', '60', '15'); ?></td>
-          </tr>
-          <tr>
-            <td colspan="2"><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-          </tr>
-          <tr>
-            <td><?php echo tep_draw_button(IMAGE_SAVE, 'disk', null, 'primary'); ?></td>
-          </tr>      
-        </table></td>
-      </tr>  
-      </form>
-       <?php
+		<?php echo tep_draw_form('review', 'testimonials.php', 'action=addnew'); ?>
+		<table class="table table-bordered">
+			<tr>
+				<td class="main" valign="top" width="140"><strong><?php echo ENTRY_FROM; ?></strong></td>
+				<td><?php echo tep_draw_input_field('customer_name'); ?></td>
+			</tr>
+			<tr>
+				<td class="main"  colspan="2" valign="top"><strong><?php echo ENTRY_TESTIMONIAL; ?></strong><br /><br /><?php echo tep_draw_textarea_field('testimonials_text', 'soft', '60', '15'); ?></td>
+			</tr>
+		</table>
+			<nav>
+				<ul class="float-right"><?php echo tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('testimonials.php', 'page=' . $_GET['page'])) . ' ' . tep_draw_button(IMAGE_SAVE, 'disk', null, 'primary'); ?></ul>
+			</nav>		
+		</form>
+	</div><!-- end col-* -->
+      <?php
      } else {
 ?>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CUSTOMER_NAME; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_DATE_ADDED; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_STATUS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+		<table class="table table-bordered table-striped table-hover">
+              <thead>
+					<tr class="dataTableHeadingRow">
+						<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_CUSTOMER_NAME; ?></th>
+						<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_DATE_ADDED; ?></th>
+						<th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_STATUS; ?></th>
+						<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+					</tr>
+				</thead>
 <?php
     $testimonials_query_raw = "select testimonials_id, customers_name, date_added, last_modified, testimonials_status from testimonials order by testimonials_id DESC";
     $testimonials_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $testimonials_query_raw, $testimonials_query_numrows);
@@ -155,9 +148,9 @@
       }
 
       if (isset($tInfo) && is_object($tInfo) && ($testimonials['testimonials_id'] == $tInfo->testimonials_id) ) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $tInfo->testimonials_id . '&action=edit') . '\'">' . "\n";
+        echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $tInfo->testimonials_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $testimonials['testimonials_id']) . '\'">' . "\n";
+        echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $testimonials['testimonials_id']) . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo $testimonials['customers_name']; ?></td>
@@ -169,25 +162,19 @@
       } else {
         echo '<a href="' . tep_href_link('testimonials.php', 'action=setflag&flag=1&tID=' . $testimonials['testimonials_id'] . '&page=' . $_GET['page']) . '">' . tep_image('images/icon_status_green_light.gif', IMAGE_ICON_STATUS_GREEN_LIGHT, 10, 10) . '</a>&nbsp;&nbsp;' . tep_image('images/icon_status_red.gif', IMAGE_ICON_STATUS_RED, 10, 10);
       }
-?></td>
-                <td class="dataTableContent" align="right"><?php if ( (is_object($tInfo)) && ($testimonials['testimonials_id'] == $tInfo->testimonials_id) ) { echo tep_image('images/icon_arrow_right.gif'); } else { echo '<a href="' . tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $testimonials['testimonials_id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-              </tr>
+?>
+				</td>
+				<td class="dataTableContent" align="right"><?php if ( (is_object($tInfo)) && ($testimonials['testimonials_id'] == $tInfo->testimonials_id) ) { echo tep_image('images/icon_arrow_right.gif'); } else { echo '<a href="' . tep_href_link('testimonials.php', 'page=' . $_GET['page'] . '&tID=' . $testimonials['testimonials_id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+			</tr>
 <?php
     }
 ?>
-              <tr>
-                <td colspan="4"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-                  <tr>
-                    <td class="smallText" valign="top"><?php echo $testimonials_split->display_count($testimonials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_TESTIMONIALS); ?></td>
-                    <td class="smallText" align="right"><?php echo $testimonials_split->display_links($testimonials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-                  </tr>
-                </table></td>
-                <tr>
-                  <td colspan="4"><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-                </tr>                
-                <td colspan="4" class="smallText" align="right"><?php echo tep_draw_button(IMAGE_BUTTON_ADD_TESTIMONIAL, 'triangle-1-e', tep_href_link('testimonials.php', 'action=new')); ?></td>
-              </tr>
-            </table></td>
+		</table>
+		<nav>
+			<ul class="pagination float-left"><?php echo $testimonials_split->display_count($testimonials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_TESTIMONIALS); ?></ul>
+			<?php echo $testimonials_split->display_links($testimonials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
+		</nav>
+	</div><!-- end col-* -->
 <?php
     $heading = array();
     $contents = array();
@@ -213,24 +200,17 @@
         break;
     }
 
-    if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-      echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-      $box = new box;
-      echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-      echo '            </td>' . "\n";
-    }
-?>
-          </tr>
-        </table></td>
-      </tr>
-<?php
+		echo '</div>' . "\n";
+	}
   }
-?>
-    </table>
-
-<?php
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

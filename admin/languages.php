@@ -120,25 +120,26 @@
 
   require('includes/template_top.php');
 ?>
+<div class="page-header">
+<?php	
+	if (empty($action)) {
+?>
+		<div class="float-right"><?php echo tep_draw_button(IMAGE_NEW_LANGUAGE, 'plus', tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $lInfo->languages_id . '&action=new')); ?></div><?php
+  }
+?>
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_LANGUAGE_NAME; ?></td>
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_LANGUAGE_CODE; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+<div class="row">
+	<div class="col-md-8">	
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_LANGUAGE_NAME; ?></th>
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_LANGUAGE_CODE; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+				</tr>
+			</thead>
 <?php
   $languages_query_raw = "select languages_id, name, code, image, directory, sort_order from " . TABLE_LANGUAGES . " order by sort_order";
   $languages_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $languages_query_raw, $languages_query_numrows);
@@ -150,41 +151,29 @@
     }
 
     if (isset($lInfo) && is_object($lInfo) && ($languages['languages_id'] == $lInfo->languages_id) ) {
-      echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $lInfo->languages_id . '&action=edit') . '\'">' . "\n";
+      echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $lInfo->languages_id . '&action=edit') . '\'">' . "\n";
     } else {
-      echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $languages['languages_id']) . '\'">' . "\n";
+      echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $languages['languages_id']) . '\'">' . "\n";
     }
 
     if (DEFAULT_LANGUAGE == $languages['code']) {
-      echo '                <td class="dataTableContent"><strong>' . $languages['name'] . ' (' . TEXT_DEFAULT . ')</strong></td>' . "\n";
+      echo '	<td class="dataTableContent"><strong>' . $languages['name'] . ' (' . TEXT_DEFAULT . ')</strong></td>' . "\n";
     } else {
-      echo '                <td class="dataTableContent">' . $languages['name'] . '</td>' . "\n";
+      echo '	<td class="dataTableContent">' . $languages['name'] . '</td>' . "\n";
     }
 ?>
                 <td class="dataTableContent"><?php echo $languages['code']; ?></td>
                 <td class="dataTableContent" align="right"><?php if (isset($lInfo) && is_object($lInfo) && ($languages['languages_id'] == $lInfo->languages_id)) { echo tep_image('images/icon_arrow_right.gif'); } else { echo '<a href="' . tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $languages['languages_id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-              </tr>
+			</tr>
 <?php
   }
 ?>
-              <tr>
-                <td colspan="3"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-                  <tr>
-                    <td class="smallText" valign="top"><?php echo $languages_split->display_count($languages_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_LANGUAGES); ?></td>
-                    <td class="smallText" align="right"><?php echo $languages_split->display_links($languages_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-                  </tr>
-<?php
-  if (empty($action)) {
-?>
-                  <tr>
-                    <td class="smallText" align="right" colspan="2"><?php echo tep_draw_button(IMAGE_NEW_LANGUAGE, 'plus', tep_href_link('languages.php', 'page=' . $_GET['page'] . '&lID=' . $lInfo->languages_id . '&action=new')); ?></td>
-                  </tr>
-<?php
-  }
-?>
-                </table></td>
-              </tr>
-            </table></td>
+		</table>
+		<nav>
+			<ul class="pagination float-left"><?php echo $languages_split->display_count($languages_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_LANGUAGES); ?></ul>
+			<?php echo $languages_split->display_links($languages_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?>
+		</nav>
+	</div>
 <?php
   $heading = array();
   $contents = array();
@@ -237,21 +226,17 @@
       break;
   }
 
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
-  }
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
+		echo '</div>' . "\n";
+	}
 
-<?php
+  echo '</div>';//row end
+
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

@@ -34,25 +34,20 @@
 
   require('includes/template_top.php');
 ?>
+<div class="page-header">
+	<h1><?php echo $cfg_group['configuration_group_title']; ?></h1>
+</div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo $cfg_group['configuration_group_title']; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CONFIGURATION_TITLE; ?></td>
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CONFIGURATION_VALUE; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+<div class="row">
+	<div class="col-md-8">	
+		<table class="table table-bordered table-striped table-hover">
+              <thead>
+					<tr class="dataTableHeadingRow">
+						<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_CONFIGURATION_TITLE; ?></th>
+						<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_CONFIGURATION_VALUE; ?></th>
+						<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+					</tr>
+			  </thead>
 <?php
   $configuration_query = tep_db_query("select configuration_id, configuration_title, configuration_value, use_function from " . TABLE_CONFIGURATION . " where configuration_group_id = '" . (int)$gID . "' order by sort_order");
   while ($configuration = tep_db_fetch_array($configuration_query)) {
@@ -79,7 +74,6 @@
       $cInfo_array = array_merge($configuration, $cfg_extra);
       $cInfo = new objectInfo($cInfo_array);
     }
-
     if ( (isset($cInfo) && is_object($cInfo)) && ($configuration['configuration_id'] == $cInfo->configuration_id) ) {
       echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('configuration.php', 'gID=' . $_GET['gID'] . '&cID=' . $cInfo->configuration_id . '&action=edit') . '\'">' . "\n";
     } else {
@@ -93,7 +87,8 @@
 <?php
   }
 ?>
-            </table></td>
+		</table>
+	</div>
 <?php
   $heading = array();
   $contents = array();
@@ -125,21 +120,17 @@
       break;
   }
 
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
-  }
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
-
-<?php
+		echo '</div>' . "\n";
+	}
+  
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

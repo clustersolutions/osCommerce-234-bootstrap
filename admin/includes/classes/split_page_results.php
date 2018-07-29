@@ -53,19 +53,20 @@
 
       if ($num_pages > 1) {
         $display_links = tep_draw_form('pages', $PHP_SELF, '', 'get');
-
-        if ($current_page_number > 1) {
-          $display_links .= '<a href="' . tep_href_link($PHP_SELF, $parameters . $page_name . '=' . ($current_page_number - 1)) . '" class="splitPageLink">' . PREVNEXT_BUTTON_PREV . '</a>&nbsp;&nbsp;';
+        
+		$display_links .= '	<ul class="pagination float-right">';        
+		if ($current_page_number > 1) {
+          $display_links .= '<li class="page-item"><a href="' . tep_href_link($PHP_SELF, $parameters . $page_name . '=' . ($current_page_number - 1)) . '" class="page-link">' . PREVNEXT_BUTTON_PREV . '</a></li>';
         } else {
-          $display_links .= PREVNEXT_BUTTON_PREV . '&nbsp;&nbsp;';
+          $display_links .= '<li class="page-item disabled"><a class="page-link">' . PREVNEXT_BUTTON_PREV . '</a></li>';
         }
 
-        $display_links .= sprintf(TEXT_RESULT_PAGE, tep_draw_pull_down_menu($page_name, $pages_array, $current_page_number, 'onchange="this.form.submit();"'), $num_pages);
+        $display_links .= '<li class="page-item">' . tep_draw_pull_down_menu($page_name, $pages_array, $current_page_number, 'onchange="this.form.submit();"') . '</li>';
 
         if (($current_page_number < $num_pages) && ($num_pages != 1)) {
-          $display_links .= '&nbsp;&nbsp;<a href="' . tep_href_link($PHP_SELF, $parameters . $page_name . '=' . ($current_page_number + 1)) . '" class="splitPageLink">' . PREVNEXT_BUTTON_NEXT . '</a>';
+          $display_links .= '<li class="page-item"><a href="' . tep_href_link($PHP_SELF, $parameters . $page_name . '=' . ($current_page_number + 1)) . '" class="page-link">' . PREVNEXT_BUTTON_NEXT . '</a></li>';
         } else {
-          $display_links .= '&nbsp;&nbsp;' . PREVNEXT_BUTTON_NEXT;
+          $display_links .= '<li class="page-item disabled"><a class="page-link">' . PREVNEXT_BUTTON_NEXT . '</a></li>';
         }
 
         if ($parameters != '') {
@@ -76,10 +77,10 @@
             $display_links .= tep_draw_hidden_field(rawurldecode($key), rawurldecode($value));
           }
         }
-
+        $display_links .= '</ul>';
         $display_links .= tep_hide_session_id() . '</form>';
       } else {
-        $display_links = sprintf(TEXT_RESULT_PAGE, $num_pages, $num_pages);
+        $display_links = '	<ul class="pagination float-right"><li>' . sprintf(TEXT_RESULT_PAGE, $num_pages, $num_pages) . '</li></ul>';
       }
 
       return $display_links;

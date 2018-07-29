@@ -102,6 +102,7 @@ define('BOX_REPORTS_PRODUCTS_PURCHASED', 'Products Purchased');
 define('BOX_REPORTS_ORDERS_TOTAL', 'Customer Orders-Total');
 
 // tools text in includes/boxes/tools.php
+define('BOX_HEADING_ADMIN_MODULES', 'Admin Modules');
 define('BOX_HEADING_TOOLS', 'Tools');
 define('BOX_TOOLS_ACTION_RECORDER', 'Action Recorder');
 define('BOX_TOOLS_BACKUP', 'Database Backup');

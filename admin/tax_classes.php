@@ -46,23 +46,26 @@
   require('includes/template_top.php');
 ?>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_TAX_CLASSES; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+<div class="page-header">
+<?php	
+	if (empty($action)) {
+?>
+	<div class="float-right"><?php echo tep_draw_button(IMAGE_NEW_TAX_CLASS, 'plus', tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&action=new')); ?></div>
+<?php
+	}
+?>	
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">	
+
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_TAX_CLASSES; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+				</tr>
+			</thead>
 <?php
   $classes_query_raw = "select tax_class_id, tax_class_title, tax_class_description, last_modified, date_added from " . TABLE_TAX_CLASS . " order by tax_class_title";
   $classes_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $classes_query_raw, $classes_query_numrows);
@@ -73,35 +76,23 @@
     }
 
     if (isset($tcInfo) && is_object($tcInfo) && ($classes['tax_class_id'] == $tcInfo->tax_class_id)) {
-      echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&tID=' . $tcInfo->tax_class_id . '&action=edit') . '\'">' . "\n";
+      echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&tID=' . $tcInfo->tax_class_id . '&action=edit') . '\'">' . "\n";
     } else {
-      echo'              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&tID=' . $classes['tax_class_id']) . '\'">' . "\n";
+      echo'<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&tID=' . $classes['tax_class_id']) . '\'">' . "\n";
     }
 ?>
                 <td class="dataTableContent"><?php echo $classes['tax_class_title']; ?></td>
                 <td class="dataTableContent" align="right"><?php if (isset($tcInfo) && is_object($tcInfo) && ($classes['tax_class_id'] == $tcInfo->tax_class_id)) { echo tep_image('images/icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&tID=' . $classes['tax_class_id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-              </tr>
+			</tr>
 <?php
   }
 ?>
-              <tr>
-                <td colspan="2"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-                  <tr>
-                    <td class="smallText" valign="top"><?php echo $classes_split->display_count($classes_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_TAX_CLASSES); ?></td>
-                    <td class="smallText" align="right"><?php echo $classes_split->display_links($classes_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-                  </tr>
-<?php
-  if (empty($action)) {
-?>
-                  <tr>
-                    <td class="smallText" colspan="2" align="right"><?php echo tep_draw_button(IMAGE_NEW_TAX_CLASS, 'plus', tep_href_link('tax_classes.php', 'page=' . $_GET['page'] . '&action=new')); ?></td>
-                  </tr>
-<?php
-  }
-?>
-                </table></td>
-              </tr>
-            </table></td>
+		</table>
+		<nav>
+			<ul class="pagination float-left"><?php echo $classes_split->display_count($classes_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_TAX_CLASSES); ?></ul>
+			<?php echo $classes_split->display_links($classes_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?>
+		</nav>
+	</div>
 <?php
   $heading = array();
   $contents = array();
@@ -144,21 +135,16 @@
       }
       break;
   }
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
-  }
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
+		echo '</div>' . "\n";
+	}
 
-<?php
+  echo '</div>';//row end
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

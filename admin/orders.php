@@ -87,85 +87,7 @@
       $messageStack->add(sprintf(ERROR_ORDER_DOES_NOT_EXIST, $oID), 'error');
     }
   }
-
-  if (!function_exists('tep_draw_button')) { // v2.2rc2a compatibility
-    function tep_draw_button($title = null, $icon = null, $link = null, $priority = null, $params = null) {
-      static $button_counter = 1;
-
-      $types = array('submit', 'button', 'reset');
-
-      if ( !isset($params['type']) ) {
-        $params['type'] = 'submit';
-      }
-
-      if ( !in_array($params['type'], $types) ) {
-        $params['type'] = 'submit';
-      }
-
-      if ( ($params['type'] == 'submit') && isset($link) ) {
-        $params['type'] = 'button';
-      }
-
-      if (!isset($priority)) {
-        $priority = 'secondary';
-      }
-
-      $button = '<span class="tdbLink">';
-
-      if ( ($params['type'] == 'button') && isset($link) ) {
-        $button .= '<a id="tdb' . $button_counter . '" href="' . $link . '"';
-
-        if ( isset($params['newwindow']) ) {
-          $button .= ' target="_blank"';
-        }
-      } else {
-        $button .= '<button id="tdb' . $button_counter . '" type="' . tep_output_string($params['type']) . '"';
-      }
-
-      if ( isset($params['params']) ) {
-        $button .= ' ' . $params['params'];
-      }
-
-      $button .= '>' . $title;
-
-      if ( ($params['type'] == 'button') && isset($link) ) {
-        $button .= '</a>';
-      } else {
-        $button .= '</button>';
-      }
-
-      $button .= '</span><script type="text/javascript">$("#tdb' . $button_counter . '").button(';
-
-      $args = array();
-
-      if ( isset($icon) ) {
-        if ( !isset($params['iconpos']) ) {
-          $params['iconpos'] = 'left';
-        }
-
-        if ( $params['iconpos'] == 'left' ) {
-          $args[] = 'icons:{primary:"ui-icon-' . $icon . '"}';
-        } else {
-          $args[] = 'icons:{secondary:"ui-icon-' . $icon . '"}';
-        }
-      }
-
-      if (empty($title)) {
-        $args[] = 'text:false';
-      }
-
-      if (!empty($args)) {
-        $button .= '{' . implode(',', $args) . '}';
-      }
-
-      $button .= ').addClass("ui-priority-' . $priority . '").parent().removeClass("tdbLink");</script>';
-
-      $button_counter++;
-
-      return $button;
-    }
-  }
-
+  
   include('includes/classes/order.php');
 
   $OSCOM_Hooks->call('orders', 'orderAction');
@@ -175,45 +97,25 @@
   $base_url = ($request_type == 'SSL') ? HTTPS_SERVER . DIR_WS_HTTPS_ADMIN : HTTP_SERVER . DIR_WS_ADMIN;
 ?>
 
-<script>
-// v2.2rc2a compatibility
-if ( typeof jQuery == 'undefined' ) {
-  document.write('<scr' + 'ipt src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></scr' + 'ipt>');
-}
-</script>
-
-<script>
-if ( typeof jQuery.ui == 'undefined' ) {
-  document.write('<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/redmond/jquery-ui.css" />');
-  document.write('<scr' + 'ipt src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></scr' + 'ipt>');
-
-/* Custom jQuery UI */
-  document.write('<style>.ui-widget { font-family: Lucida Grande, Lucida Sans, Verdana, Arial, sans-serif; font-size: 11px; } .ui-dialog { min-width: 500px; }</style>');
-}
-</script>
-
 <?php
   if (($action == 'edit') && ($order_exists == true)) {
     $order = new order($oID);
 ?>
 
 <h1 class="pageHeading"><?php echo HEADING_TITLE . ': #' . (int)$oID . ' (' . $order->info['total'] . ')'; ?></h1>
-
-<div style="text-align: right; padding-bottom: 15px;"><?php echo tep_draw_button(IMAGE_ORDERS_INVOICE, 'document', tep_href_link('invoice.php', 'oID=' . $_GET['oID']), null, array('newwindow' => true)) . tep_draw_button(IMAGE_ORDERS_PACKINGSLIP, 'document', tep_href_link('packingslip.php', 'oID=' . $_GET['oID']), null, array('newwindow' => true)) . tep_draw_button(IMAGE_BACK, 'triangle-1-w', tep_href_link('orders.php', tep_get_all_get_params(array('action')))); ?></div>
-
-<div id="orderTabs" style="overflow: auto;">
-  <ul>
-    <li><?php echo '<a href="' . substr(tep_href_link('orders.php', tep_get_all_get_params()), strlen($base_url)) . '#section_summary_content">' . TAB_TITLE_SUMMARY . '</a>'; ?></li>
-    <li><?php echo '<a href="' . substr(tep_href_link('orders.php', tep_get_all_get_params()), strlen($base_url)) . '#section_products_content">' . TAB_TITLE_PRODUCTS . '</a>'; ?></li>
-    <li><?php echo '<a href="' . substr(tep_href_link('orders.php', tep_get_all_get_params()), strlen($base_url)) . '#section_status_history_content">' . TAB_TITLE_STATUS_HISTORY . '</a>'; ?></li>
+  <ul class="nav nav-tabs"  id="orderTabs" role="tablist">
+    <li class="nav-item"><?php echo '<a class="nav-link active" id="section_summary_tab" data-toggle="tab" href="#section_summary_content" role="tab" aria-controls="' . TAB_TITLE_SUMMARY . '" aria-selected="true">' . TAB_TITLE_SUMMARY . '</a>'; ?></li>
+    <li class="nav-item"><?php echo '<a class="nav-link" id="section_products_tab" data-toggle="tab" href="#section_products_content" role="tab" aria-controls="' . TAB_TITLE_PRODUCTS . '" aria-selected="false">' . TAB_TITLE_PRODUCTS . '</a>'; ?></li>
+    <li class="nav-item"><?php echo '<a class="nav-link" id="section_status_history_tab" data-toggle="tab" href="#section_status_history_content" role="tab" aria-controls="' . TAB_TITLE_STATUS_HISTORY . '" aria-selected="false">' . TAB_TITLE_STATUS_HISTORY . '</a>'; ?></li>
   </ul>
-
-  <div id="section_summary_content" style="padding: 10px;">
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+  <!-- Tab panes -->
+  <div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" role="tabpanel" aria-labelledby="section_summary_tab" id="section_summary_content">
+    <table class="table">
       <tr>
         <td width="33%" valign="top">
           <fieldset style="border: 0; height: 100%;">
-            <legend style="margin-left: -20px; font-weight: bold;"><?php echo ENTRY_CUSTOMER; ?></legend>
+            <legend style="font-weight: bold;"><?php echo ENTRY_CUSTOMER; ?></legend>
 
             <p><?php echo tep_address_format($order->customer['format_id'], $order->customer, 1, '', '<br />'); ?></p>
             <p><?php echo $order->customer['telephone'] . '<br />' . '<a href="mailto:' . $order->customer['email_address'] . '"><u>' . $order->customer['email_address'] . '</u></a>'; ?></p>
@@ -221,14 +123,14 @@ if ( typeof jQuery.ui == 'undefined' ) {
         </td>
         <td width="33%" valign="top">
           <fieldset style="border: 0; height: 100%;">
-            <legend style="margin-left: -20px; font-weight: bold;"><?php echo ENTRY_SHIPPING_ADDRESS; ?></legend>
+            <legend style="font-weight: bold;"><?php echo ENTRY_SHIPPING_ADDRESS; ?></legend>
 
             <p><?php echo tep_address_format($order->delivery['format_id'], $order->delivery, 1, '', '<br />'); ?></p>
           </fieldset>
         </td>
         <td width="33%" valign="top">
           <fieldset style="border: 0; height: 100%;">
-            <legend style="margin-left: -20px; font-weight: bold;"><?php echo ENTRY_BILLING_ADDRESS; ?></legend>
+            <legend style="font-weight: bold;"><?php echo ENTRY_BILLING_ADDRESS; ?></legend>
 
             <p><?php echo tep_address_format($order->billing['format_id'], $order->billing, 1, '', '<br />'); ?></p>
           </fieldset>
@@ -237,7 +139,7 @@ if ( typeof jQuery.ui == 'undefined' ) {
       <tr>
         <td width="33%" valign="top">
           <fieldset style="border: 0; height: 100%;">
-            <legend style="margin-left: -20px; font-weight: bold;"><?php echo ENTRY_PAYMENT_METHOD; ?></legend>
+            <legend style="font-weight: bold;"><?php echo ENTRY_PAYMENT_METHOD; ?></legend>
 
             <p><?php echo $order->info['payment_method']; ?></p>
 
@@ -245,7 +147,7 @@ if ( typeof jQuery.ui == 'undefined' ) {
     if (tep_not_null($order->info['cc_type']) || tep_not_null($order->info['cc_owner']) || tep_not_null($order->info['cc_number'])) {
 ?>
 
-            <table border="0" cellspacing="0" cellpadding="0">
+            <table class="table">
               <tr>
                 <td><?php echo ENTRY_CREDIT_CARD_TYPE; ?></td>
                 <td><?php echo $order->info['cc_type']; ?></td>
@@ -271,14 +173,14 @@ if ( typeof jQuery.ui == 'undefined' ) {
         </td>
         <td width="33%" valign="top">
           <fieldset style="border: 0; height: 100%;">
-            <legend style="margin-left: -20px; font-weight: bold;"><?php echo ENTRY_STATUS; ?></legend>
+            <legend style="font-weight: bold;"><?php echo ENTRY_STATUS; ?></legend>
 
             <p><?php echo $order->info['status'] . '<br />' . (empty($order->info['last_modified']) ? tep_datetime_short($order->info['date_purchased']) : tep_datetime_short($order->info['last_modified'])); ?></p>
           </fieldset>
         </td>
         <td width="33%" valign="top">
           <fieldset style="border: 0; height: 100%;">
-            <legend style="margin-left: -20px; font-weight: bold;"><?php echo ENTRY_TOTAL; ?></legend>
+            <legend style="font-weight: bold;"><?php echo ENTRY_TOTAL; ?></legend>
 
             <p><?php echo $order->info['total']; ?></p>
           </fieldset>
@@ -287,17 +189,19 @@ if ( typeof jQuery.ui == 'undefined' ) {
     </table>
   </div>
 
-  <div id="section_products_content" style="padding: 10px;">
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr class="dataTableHeadingRow">
-        <td class="dataTableHeadingContent" colspan="2"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
-        <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS_MODEL; ?></td>
-        <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TAX; ?></td>
-        <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRICE_EXCLUDING_TAX; ?></td>
-        <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRICE_INCLUDING_TAX; ?></td>
-        <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TOTAL_EXCLUDING_TAX; ?></td>
-        <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TOTAL_INCLUDING_TAX; ?></td>
-      </tr>
+    <div role="tabpanel" class="tab-pane" role="tabpanel" aria-labelledby="section_products_tab" id="section_products_content">
+        <table class="table">
+            <thead>
+                <tr class="dataTableHeadingRow">
+                    <th class="dataTableHeadingContent" colspan="2"><?php echo TABLE_HEADING_PRODUCTS; ?></th>
+                    <th class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS_MODEL; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TAX; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRICE_EXCLUDING_TAX; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRICE_INCLUDING_TAX; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TOTAL_EXCLUDING_TAX; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_TOTAL_INCLUDING_TAX; ?></th>
+                </tr>
+            </thead>
 <?php
     for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
       echo '      <tr class="dataTableRow">' . "\n" .
@@ -322,8 +226,7 @@ if ( typeof jQuery.ui == 'undefined' ) {
       echo '      </tr>' . "\n";
     }
 ?>
-      <tr>
-        <td align="right" colspan="8"><table border="0" cellspacing="0" cellpadding="2">
+            <tfoot>
 <?php
     foreach ( $order->totals as $ot ) {
       echo '          <tr>' . "\n" .
@@ -332,15 +235,14 @@ if ( typeof jQuery.ui == 'undefined' ) {
            '          </tr>' . "\n";
     }
 ?>
-        </table></td>
-      </tr>
-    </table>
-  </div>
+            </tfoot>
+        </table>
+    </div>
 
-  <div id="section_status_history_content">
+  <div role="tabpanel" class="tab-pane" role="tabpanel" aria-labelledby="section_status_history_tab" id="section_status_history_content">
     <?php echo tep_draw_form('status', 'orders.php', tep_get_all_get_params(array('action')) . 'action=update_order'); ?>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+    <table class="table">
       <tr>
         <td><?php echo ENTRY_STATUS; ?></td>
         <td><?php echo tep_draw_pull_down_menu('status', $orders_statuses, $order->info['orders_status']); ?></td>
@@ -364,15 +266,17 @@ if ( typeof jQuery.ui == 'undefined' ) {
 
     </form>
 
-    <br />
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr class="dataTableHeadingRow">
-        <td class="dataTableHeadingContent" align="center"><strong><?php echo TABLE_HEADING_DATE_ADDED; ?></strong></td>
-        <td class="dataTableHeadingContent" align="center"><strong><?php echo TABLE_HEADING_STATUS; ?></strong></td>
-        <td class="dataTableHeadingContent" align="center"><strong><?php echo TABLE_HEADING_COMMENTS; ?></strong></td>
-        <td class="dataTableHeadingContent" align="right"><strong><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></strong></td>
-      </tr>
+
+    <table class="table">
+        <thead>
+            <tr class="dataTableHeadingRow">
+                <th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_DATE_ADDED; ?></th>
+                <th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_STATUS; ?></th>
+                <th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_COMMENTS; ?></th>
+                <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></th>
+            </tr>
+        </thead>
 
 <?php
     $orders_history_query = tep_db_query("select orders_status_id, date_added, customer_notified, comments from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . tep_db_input($oID) . "' order by date_added desc");
@@ -402,50 +306,46 @@ if ( typeof jQuery.ui == 'undefined' ) {
 
     </table>
   </div>
-
+</div>
 <?php
     echo $OSCOM_Hooks->call('orders', 'orderTab');
 ?>
-
-</div>
-
 <script>
-$(function() {
-  $('#orderTabs').tabs();
+$('#orderTabs a').click(function (e) {
+  e.preventDefault();
+  $(this).tab('show');
 });
 </script>
 
 <?php
   } else {
 ?>
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
-            <td align="right"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-              <tr><?php echo tep_draw_form('orders', 'orders.php', '', 'get'); ?>
-                <td class="smallText" align="right"><?php echo HEADING_TITLE_SEARCH . ' ' . tep_draw_input_field('oID', '', 'size="12"') . tep_draw_hidden_field('action', 'edit'); ?></td>
-              <?php echo tep_hide_session_id(); ?></form></tr>
-              <tr><?php echo tep_draw_form('status', 'orders.php', '', 'get'); ?>
-                <td class="smallText" align="right"><?php echo HEADING_TITLE_STATUS . ' ' . tep_draw_pull_down_menu('status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_ORDERS)), $orders_statuses), '', 'onchange="this.form.submit();"'); ?></td>
-              <?php echo tep_hide_session_id(); ?></form></tr>
-            </table></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CUSTOMERS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ORDER_TOTAL; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_DATE_PURCHASED; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STATUS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+    <div class="page-header">
+        <h1><?php echo HEADING_TITLE; ?></h1>
+    </div>
+<div class="row">
+
+        
+        <!-- <table border="0" width="100%" cellspacing="0" cellpadding="0">
+        <tr><?php echo tep_draw_form('orders', 'orders.php', '', 'get'); ?>
+        <td class="smallText" align="right"><?php echo HEADING_TITLE_SEARCH . ' ' . tep_draw_input_field('oID', '', 'size="12"') . tep_draw_hidden_field('action', 'edit'); ?></td>
+        <?php echo tep_hide_session_id(); ?></form></tr>
+        <tr><?php echo tep_draw_form('status', 'orders.php', '', 'get'); ?>
+        <td class="smallText" align="right"><?php echo HEADING_TITLE_STATUS . ' ' . tep_draw_pull_down_menu('status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_ORDERS)), $orders_statuses), '', 'onchange="this.form.submit();"'); ?></td>
+        <?php echo tep_hide_session_id(); ?></form></tr>
+        </table> -->
+        
+	<div class="col-md-8">	
+		<table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr class="dataTableHeadingRow">
+                    <th class="dataTableHeadingContent"><?php echo TABLE_HEADING_CUSTOMERS; ?> aaa</th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ORDER_TOTAL; ?></th>
+                    <th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_DATE_PURCHASED; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STATUS; ?></th>
+                    <th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+            </tr>
+        </thead>
 <?php
     if (isset($_GET['cID'])) {
       $cID = tep_db_prepare_input($_GET['cID']);
@@ -464,9 +364,9 @@ $(function() {
       }
 
       if (isset($oInfo) && is_object($oInfo) && ($orders['orders_id'] == $oInfo->orders_id)) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID', 'action')) . 'oID=' . $oInfo->orders_id . '&action=edit') . '\'">' . "\n";
+        echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID', 'action')) . 'oID=' . $oInfo->orders_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID')) . 'oID=' . $orders['orders_id']) . '\'">' . "\n";
+        echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('orders.php', tep_get_all_get_params(array('oID')) . 'oID=' . $orders['orders_id']) . '\'">' . "\n";
       }
 ?>
                 <td class="dataTableContent"><?php echo '<a href="' . tep_href_link('orders.php', tep_get_all_get_params(array('oID', 'action')) . 'oID=' . $orders['orders_id'] . '&action=edit') . '">' . tep_image('images/icons/preview.gif', ICON_PREVIEW) . '</a>&nbsp;' . $orders['customers_name']; ?></td>
@@ -474,19 +374,17 @@ $(function() {
                 <td class="dataTableContent" align="center"><?php echo tep_datetime_short($orders['date_purchased']); ?></td>
                 <td class="dataTableContent" align="right"><?php echo $orders['orders_status_name']; ?></td>
                 <td class="dataTableContent" align="right"><?php if (isset($oInfo) && is_object($oInfo) && ($orders['orders_id'] == $oInfo->orders_id)) { echo tep_image('images/icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link('orders.php', tep_get_all_get_params(array('oID')) . 'oID=' . $orders['orders_id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-              </tr>
+            </tr>
 <?php
     }
 ?>
-              <tr>
-                <td colspan="5"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-                  <tr>
-                    <td class="smallText" valign="top"><?php echo $orders_split->display_count($orders_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_ORDERS); ?></td>
-                    <td class="smallText" align="right"><?php echo $orders_split->display_links($orders_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page'], tep_get_all_get_params(array('page', 'oID', 'action'))); ?></td>
-                  </tr>
-                </table></td>
-              </tr>
-            </table></td>
+
+        </table>
+        <nav>
+            <ul class="pagination float-left"><?php echo $orders_split->display_count($orders_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_ORDERS); ?></ul>
+            <?php echo $orders_split->display_links($orders_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page'], tep_get_all_get_params(array('page', 'oID', 'action'))); ?>
+        </nav>
+	</div>    
 <?php
   $heading = array();
   $contents = array();
@@ -513,20 +411,17 @@ $(function() {
       break;
   }
 
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
-  }
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
-<?php
+		echo '</div>' . "\n";
+	}
+    
+    echo '</div>';//row end
+
   }
 
   require('includes/template_bottom.php');

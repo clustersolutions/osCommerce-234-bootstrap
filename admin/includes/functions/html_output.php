@@ -89,7 +89,7 @@
 ////
 // The HTML image wrapper function
   function tep_image($src, $alt = '', $width = '', $height = '', $parameters = '') {
-    $image = '<img src="' . tep_output_string($src) . '" border="0" alt="' . tep_output_string($alt) . '"';
+    $image = '<img src="' . tep_output_string($src) . '" alt="' . tep_output_string($alt) . '"';
 
     if (tep_not_null($alt)) {
       $image .= ' title="' . tep_output_string($alt) . '"';
@@ -195,7 +195,7 @@
 ////
 // Output a form input field
   function tep_draw_input_field($name, $value = '', $parameters = '', $required = false, $type = 'text', $reinsert_value = true) {
-    $field = '<input type="' . tep_output_string($type) . '" name="' . tep_output_string($name) . '"';
+	$field = '<input class="form-control" type="' . tep_output_string($type) . '" name="' . tep_output_string($name) . '"';
 
     if ( ($reinsert_value == true) && ( (isset($_GET[$name]) && is_string($_GET[$name])) || (isset($_POST[$name]) && is_string($_POST[$name])) ) ) {
       if (isset($_GET[$name]) && is_string($_GET[$name])) {
@@ -214,8 +214,8 @@
     $field .= ' />';
 
     if ($required == true) $field .= TEXT_FIELD_REQUIRED;
-
-    return $field;
+    
+	return $field;
   }
 
 ////
@@ -266,7 +266,7 @@
 // Output a form textarea field
 // The $wrap parameter is no longer used in the core xhtml template
   function tep_draw_textarea_field($name, $wrap, $width, $height, $text = '', $parameters = '', $reinsert_value = true) {
-    $field = '<textarea name="' . tep_output_string($name) . '" cols="' . tep_output_string($width) . '" rows="' . tep_output_string($height) . '"';
+    $field = '<textarea class="form-control" name="' . tep_output_string($name) . '" cols="' . tep_output_string($width) . '" rows="' . tep_output_string($height) . '"';
 
     if (tep_not_null($parameters)) $field .= ' ' . $parameters;
 
@@ -324,7 +324,7 @@
 ////
 // Output a form pull down menu
   function tep_draw_pull_down_menu($name, $values, $default = '', $parameters = '', $required = false) {
-    $field = '<select name="' . tep_output_string($name) . '"';
+    $field = '<select class="form-control" name="' . tep_output_string($name) . '"';
 
     if (tep_not_null($parameters)) $field .= ' ' . $parameters;
 
@@ -355,7 +355,7 @@
 
 ////
 // Output a jQuery UI Button
-  function tep_draw_button($title = null, $icon = null, $link = null, $priority = null, $params = null) {
+  function tep_draw_button($title = null, $icon = null, $link = null, $priority = null, $params = null, $style = null) {
     static $button_counter = 1;
 
     $types = array('submit', 'button', 'reset');
@@ -376,55 +376,40 @@
       $priority = 'secondary';
     }
 
-    $button = '<span class="tdbLink">';
+    $button = NULL;
 
     if ( ($params['type'] == 'button') && isset($link) ) {
-      $button .= '<a id="tdb' . $button_counter . '" href="' . $link . '"';
+      $button .= '<a  href="' . $link . '"';
 
       if ( isset($params['newwindow']) ) {
         $button .= ' target="_blank"';
       }
     } else {
-      $button .= '<button id="tdb' . $button_counter . '" type="' . tep_output_string($params['type']) . '"';
+      $button .= '<button ';
+      $button .= ' type="' . tep_output_string($params['type']) . '"';
     }
 
     if ( isset($params['params']) ) {
       $button .= ' ' . $params['params'];
     }
 
-    $button .= '>' . $title;
+    $button .= ' class="btn ';
+
+    $button .= (isset($style)) ? $style : 'btn-outline-secondary';
+
+    $button .= '">';
+
+    if (isset($icon) && tep_not_null($icon)) {
+      $button .= ' <span class="' . $icon . '"></span> ';
+    }
+
+    $button .= $title;
 
     if ( ($params['type'] == 'button') && isset($link) ) {
       $button .= '</a>';
     } else {
       $button .= '</button>';
     }
-
-    $button .= '</span><script type="text/javascript">$("#tdb' . $button_counter . '").button(';
-
-    $args = array();
-
-    if ( isset($icon) ) {
-      if ( !isset($params['iconpos']) ) {
-        $params['iconpos'] = 'left';
-      }
-
-      if ( $params['iconpos'] == 'left' ) {
-        $args[] = 'icons:{primary:"ui-icon-' . $icon . '"}';
-      } else {
-        $args[] = 'icons:{secondary:"ui-icon-' . $icon . '"}';
-      }
-    }
-
-    if (empty($title)) {
-      $args[] = 'text:false';
-    }
-
-    if (!empty($args)) {
-      $button .= '{' . implode(',', $args) . '}';
-    }
-
-    $button .= ').addClass("ui-priority-' . $priority . '").parent().removeClass("tdbLink");</script>';
 
     $button_counter++;
 

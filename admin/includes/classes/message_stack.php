@@ -23,7 +23,7 @@
 	function __construct() {
       global $messageToStack;
 
-      $this->errors = array();
+      $this->messages = array();
 
       if (tep_session_is_registered('messageToStack')) {
         for ($i = 0, $n = sizeof($messageToStack); $i < $n; $i++) {
@@ -32,16 +32,28 @@
         tep_session_unregister('messageToStack');
       }
     }
-
+// class methods
     function add($message, $type = 'error') {
       if ($type == 'error') {
-        $this->errors[] = array('params' => 'class="messageStackError"', 'text' => tep_image('images/icons/error.gif', ICON_ERROR) . '&nbsp;' . $message);
+        $this->messages[] = array('params' => 'class="alert alert-danger alert-dismissible"', 'text' => $message);
       } elseif ($type == 'warning') {
-        $this->errors[] = array('params' => 'class="messageStackWarning"', 'text' => tep_image('images/icons/warning.gif', ICON_WARNING) . '&nbsp;' . $message);
+        $this->messages[] = array('params' => 'class="alert alert-warning alert-dismissible"', 'text' => $message);
       } elseif ($type == 'success') {
-        $this->errors[] = array('params' => 'class="messageStackSuccess"', 'text' => tep_image('images/icons/success.gif', ICON_SUCCESS) . '&nbsp;' . $message);
+        $this->messages[] = array('params' => 'class="alert alert-success alert-dismissible"', 'text' => $message);
       } else {
-        $this->errors[] = array('params' => 'class="messageStackError"', 'text' => $message);
+        $this->messages[] = array('params' => 'class="alert alert-info alert-dismissible"', 'text' => $message);
+      }
+      $this->size++;
+    }
+    function add2($message, $type = 'error') {
+      if ($type == 'error') {
+        $this->messages[] = array('params' => 'class="messageStackError"', 'text' => tep_image('images/icons/error.gif', ICON_ERROR) . '&nbsp;' . $message);
+      } elseif ($type == 'warning') {
+        $this->messages[] = array('params' => 'class="messageStackWarning"', 'text' => tep_image('images/icons/warning.gif', ICON_WARNING) . '&nbsp;' . $message);
+      } elseif ($type == 'success') {
+        $this->messages[] = array('params' => 'class="messageStackSuccess"', 'text' => tep_image('images/icons/success.gif', ICON_SUCCESS) . '&nbsp;' . $message);
+      } else {
+        $this->messages[] = array('params' => 'class="messageStackError"', 'text' => $message);
       }
 
       $this->size++;
@@ -59,13 +71,12 @@
     }
 
     function reset() {
-      $this->errors = array();
+      $this->messages = array();
       $this->size = 0;
     }
 
     function output() {
-      $this->table_data_parameters = 'class="messageBox"';
-      return $this->tableBlock($this->errors);
+      return $this->alertBlock($this->messages);
     }
   }
 ?>

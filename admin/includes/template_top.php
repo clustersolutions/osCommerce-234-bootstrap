@@ -17,45 +17,38 @@
 <meta name="robots" content="noindex,nofollow">
 <title><?php echo TITLE; ?></title>
 <base href="<?php echo ($request_type == 'SSL') ? HTTPS_SERVER . DIR_WS_HTTPS_ADMIN : HTTP_SERVER . DIR_WS_ADMIN; ?>" />
-<!--[if IE]><script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/flot/excanvas.min.js', '', 'SSL'); ?>"></script><![endif]-->
-<link rel="stylesheet" type="text/css" href="<?php echo tep_catalog_href_link('ext/jquery/ui/redmond/jquery-ui-1.10.4.min.css', '', 'SSL'); ?>">
-<script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/jquery/jquery-2.2.3.min.js', '', 'SSL'); ?>"></script>
-<script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/jquery/ui/jquery-ui-1.10.4.min.js', '', 'SSL'); ?>"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<!-- <link href="<?php echo tep_catalog_href_link('ext/bootstrap/css/bootstrap.min.css', '', 'SSL'); ?>" rel="stylesheet">-->
+<link rel="stylesheet" href="<?php echo tep_catalog_href_link('ext/datepicker/css/datepicker.css', '', 'SSL'); ?>">
+<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
 
-<?php
-  if (tep_not_null(JQUERY_DATEPICKER_I18N_CODE)) {
-?>
-<script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/jquery/ui/i18n/jquery.ui.datepicker-' . JQUERY_DATEPICKER_I18N_CODE . '.js', '', 'SSL'); ?>"></script>
-<script type="text/javascript">
-$.datepicker.setDefaults($.datepicker.regional['<?php echo JQUERY_DATEPICKER_I18N_CODE; ?>']);
-</script>
-<?php
-  }
-?>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!--[if IE]><script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/flot/excanvas.min.js', '', 'SSL'); ?>"></script><![endif]-->
+<!-- <link rel="stylesheet" type="text/css" href="<?php echo tep_catalog_href_link('ext/jquery/ui/redmond/jquery-ui-1.10.4.min.css', '', 'SSL'); ?>"> -->
+<script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/jquery/ui/jquery-ui-1.10.4.min.js', '', 'SSL'); ?>"></script>
 
 <script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/flot/jquery.flot.min.js', '', 'SSL'); ?>"></script>
 <script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/flot/jquery.flot.time.min.js', '', 'SSL'); ?>"></script>
-<link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
+<script type="text/javascript" src="<?php echo tep_catalog_href_link('ext/flot/jquery.flot.resize.min.js', '', 'SSL'); ?>"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<!-- <script src="<?php echo tep_catalog_href_link('ext/bootstrap/js/bootstrap.min.js', '', 'SSL'); ?>"></script> -->
+<script src="<?php echo tep_catalog_href_link('ext/datepicker/js/bootstrap-datepicker.js', '', 'SSL'); ?>"></script>
 <script type="text/javascript" src="includes/general.js"></script>
 </head>
 <body>
-
-<?php require('includes/header.php'); ?>
-
-<?php
-  if (tep_session_is_registered('admin')) {
-    include('includes/column_left.php');
-  } else {
-?>
-
-<style>
-#contentText {
-  margin-left: 0;
-}
-</style>
+    <?php require('includes/header.php'); ?>
+    <div id="bodyWrapper">
+        <div class="container-fluid">
+            <div class="row">
 
 <?php
-  }
+	if (tep_session_is_registered('admin')) {
+        include('includes/column_left.php');
+		echo '<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">';	  
+	} else {
+		echo '<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">';
+	}
 ?>
-
-<div id="contentText">

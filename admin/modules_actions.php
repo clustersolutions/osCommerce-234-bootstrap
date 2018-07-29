@@ -17,20 +17,21 @@
   require('includes/template_top.php');
 ?>
 
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
-  <tr>
-    <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-    <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-  </tr>
-</table>
+<div class="page-header">	
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-12">	
 
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
-  <tr class="dataTableHeadingRow">
-    <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_FILE; ?></td>
-    <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_ACTION; ?></td>
-    <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_CLASS; ?></td>
-    <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_METHOD; ?></td>
-  </tr>
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_FILE; ?></th>
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_ACTION; ?></th>
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_CLASS; ?></th>
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_METHOD; ?></th>
+				</tr>
+			</thead>
 
 <?php
   $files = array_diff(scandir($directory), array('.', '..'));
@@ -46,23 +47,25 @@
     $obj = new $class();
     
     foreach (get_class_methods($obj) as $method) {
-      ?>
-      <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
-        <td class="dataTableContent"><?php echo $file; ?></td>
-        <td class="dataTableContent"><?php echo $code; ?></td>
-        <td class="dataTableContent"><?php echo $class; ?></td>
-        <td class="dataTableContent"><?php echo $method; ?></td>
-      </tr>
-    <?php
+?>
+		<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
+			<td class="dataTableContent"><?php echo $file; ?></td>
+			<td class="dataTableContent"><?php echo $code; ?></td>
+			<td class="dataTableContent"><?php echo $class; ?></td>
+			<td class="dataTableContent"><?php echo $method; ?></td>
+		</tr>
+<?php
     }
   }
 ?>
 
-</table>
-
-<p class="smallText"><?php echo TEXT_ACTIONS_DIRECTORY . ' ' . DIR_FS_CATALOG . 'includes/actions/'; ?></p>
+		</table>
+		<span class="text-muted"><?php echo TEXT_ACTIONS_DIRECTORY . ' ' . DIR_FS_CATALOG . 'includes/actions/'; ?></span>
+	</div>
 
 <?php
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

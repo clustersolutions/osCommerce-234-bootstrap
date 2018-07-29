@@ -77,7 +77,7 @@ function selectAll(FormName, SelectBox) {
 
       $cancel_button = tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('newsletters.php', 'page=' . $_GET['page'] . '&nID=' . $_GET['nID']));
 
-      $choose_audience_string .= '<form name="notifications" action="' . tep_href_link('newsletters.php', 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=confirm') . '" method="post" onsubmit="return selectAll(\'notifications\', \'chosen[]\')"><table border="0" width="100%" cellspacing="0" cellpadding="2">' . "\n" .
+      $choose_audience_string .= '<form name="notifications" action="' . tep_href_link('newsletters.php', 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=confirm') . '" method="post" onsubmit="return selectAll(\'notifications\', \'chosen[]\')"><table class="table table-bordered">' . "\n" .
                                  '  <tr>' . "\n" .
                                  '    <td align="center" class="smallText"><strong>' . TEXT_PRODUCTS . '</strong><br />' . tep_draw_pull_down_menu('products', $products_array, '', 'size="20" style="width: 20em;" multiple') . '</td>' . "\n" .
                                  '    <td align="center" class="smallText">&nbsp;<br />' . $global_button . '<br /><br /><br /><input type="button" value="' . BUTTON_SELECT . '" style="width: 8em;" onClick="mover(\'remove\');"><br /><br /><input type="button" value="' . BUTTON_UNSELECT . '" style="width: 8em;" onClick="mover(\'add\');"><br /><br /><br />' . tep_draw_button(IMAGE_SEND, 'mail-closed', null, 'primary') . '<br /><br />' . $cancel_button . '</td>' . "\n" .
@@ -117,27 +117,19 @@ function selectAll(FormName, SelectBox) {
         }
       }
 
-      $confirm_string = '<table border="0" cellspacing="0" cellpadding="2">' . "\n" .
+      $confirm_string = '<table class="table table-bordered">' . "\n" .
                         '  <tr>' . "\n" .
                         '    <td class="main"><font color="#ff0000"><strong>' . sprintf(TEXT_COUNT_CUSTOMERS, sizeof($audience)) . '</strong></font></td>' . "\n" .
-                        '  </tr>' . "\n" .
-                        '  <tr>' . "\n" .
-                        '    <td>' . tep_draw_separator('pixel_trans.gif', '1', '10') . '</td>' . "\n" .
                         '  </tr>' . "\n" .
                         '  <tr>' . "\n" .
                         '    <td class="main"><strong>' . $this->title . '</strong></td>' . "\n" .
                         '  </tr>' . "\n" .
                         '  <tr>' . "\n" .
-                        '    <td>' . tep_draw_separator('pixel_trans.gif', '1', '10') . '</td>' . "\n" .
-                        '  </tr>' . "\n" .
-                        '  <tr>' . "\n" .
                         '    <td class="main"><tt>' . nl2br($this->content) . '</tt></td>' . "\n" .
                         '  </tr>' . "\n" .
-                        '  <tr>' . "\n" .
-                        '    <td>' . tep_draw_separator('pixel_trans.gif', '1', '10') . '</td>' . "\n" .
-                        '  </tr>' . "\n" .
                         '  <tr>' . tep_draw_form('confirm', 'newsletters.php', 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=confirm_send') . "\n" .
-                        '    <td class="smallText" align="right">';
+                        '</table>' . "\n" .
+						'<nav>';
       if (sizeof($audience) > 0) {
         if (isset($_GET['global']) && ($_GET['global'] == 'true')) {
           $confirm_string .= tep_draw_hidden_field('global', 'true');
@@ -146,11 +138,10 @@ function selectAll(FormName, SelectBox) {
             $confirm_string .= tep_draw_hidden_field('chosen[]', $chosen[$i]);
           }
         }
-        $confirm_string .= tep_draw_button(IMAGE_SEND, 'mail-closed', null, 'primary');
+        $confirm_string .= '  <ul class="pagination float-right">' . tep_draw_button(IMAGE_SEND, 'mail-closed', null, 'primary') . '</ul>';
       }
-      $confirm_string .= tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('newsletters.php', 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=send')) . '</td>' . "\n" .
-                         '  </tr>' . "\n" .
-                         '</table>';
+      $confirm_string .= '  <ul class="pagination float-left">' . tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('newsletters.php', 'page=' . $_GET['page'] . '&nID=' . $_GET['nID'] . '&action=send')) . '</ul>' . "\n" .
+                         '</nav>';
 
       return $confirm_string;
     }

@@ -15,24 +15,19 @@
   require('includes/template_top.php');
 ?>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_NUMBER; ?></td>
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_VIEWED; ?>&nbsp;</td>
-              </tr>
+<div class="page-header">
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">	
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_NUMBER; ?></th>
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS; ?></th>
+					<th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_VIEWED; ?>&nbsp;</th>
+				</tr>
+			</thead>
 <?php
   if (isset($_GET['page']) && ($_GET['page'] > 1)) $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS - MAX_DISPLAY_SEARCH_RESULTS;
   $rows = 0;
@@ -46,29 +41,23 @@
       $rows = '0' . $rows;
     }
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo tep_href_link('categories.php', 'action=new_product_preview&read=only&pID=' . $products['products_id'] . '&origin=stats_products_viewed.php?page=' . $_GET['page']); ?>'">
-                <td class="dataTableContent"><?php echo $rows; ?>.</td>
-                <td class="dataTableContent"><?php echo '<a href="' . tep_href_link('categories.php', 'action=new_product_preview&read=only&pID=' . $products['products_id'] . '&origin=stats_products_viewed.php?page=' . $_GET['page']) . '">' . $products['products_name'] . '</a> (' . $products['name'] . ')'; ?></td>
-                <td class="dataTableContent" align="center"><?php echo $products['products_viewed']; ?>&nbsp;</td>
-              </tr>
+			<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href='<?php echo tep_href_link('categories.php', 'action=new_product_preview&read=only&pID=' . $products['products_id'] . '&origin=stats_products_viewed.php?page=' . $_GET['page']); ?>'">
+				<td class="dataTableContent"><?php echo $rows; ?>.</td>
+				<td class="dataTableContent"><?php echo '<a href="' . tep_href_link('categories.php', 'action=new_product_preview&read=only&pID=' . $products['products_id'] . '&origin=stats_products_viewed.php?page=' . $_GET['page']) . '">' . $products['products_name'] . '</a> (' . $products['name'] . ')'; ?></td>
+				<td class="dataTableContent" align="center"><?php echo $products['products_viewed']; ?>&nbsp;</td>
+			</tr>
 <?php
   }
 ?>
-            </table></td>
-          </tr>
-          <tr>
-            <td colspan="3"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr>
-                <td class="smallText" valign="top"><?php echo $products_split->display_count($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_PRODUCTS); ?></td>
-                <td class="smallText" align="right"><?php echo $products_split->display_links($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-              </tr>
-            </table></td>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
-
+		</table>
+		<nav>
+			<ul class="pagination float-left"><?php echo $products_split->display_count($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_PRODUCTS); ?></ul>
+            <?php echo $products_split->display_links($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?>
+		</nav>
+	</div>
 <?php
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

@@ -17,24 +17,23 @@
   require('includes/template_top.php');
 ?>
 
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
-  <tr>
-    <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-    <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-  </tr>
-</table>
-
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
-
+<div class="page-header">
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">	
+		<table class="table table-bordered table-striped table-hover">
 <?php
   if ( $dir = @dir($directory) ) {
     while ( $file = $dir->read() ) {
       if ( is_dir($directory . '/' . $file) && !in_array($file, array('.', '..')) ) {
 ?>
 
-  <tr class="dataTableHeadingRow">
-    <td class="dataTableHeadingContent" colspan="2"><?php echo $file; ?></td>
-  </tr>
+			<thead>
+			  <tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent" colspan="2"><?php echo $file; ?></th>
+			  </tr>
+			</thead>
 
 <?php
         if ( $dir2 = @dir($directory . '/' . $file) ) {
@@ -56,12 +55,10 @@
                       foreach ( get_class_methods($obj) as $method ) {
                         if ( substr($method, 0, 7) == 'listen_' ) {
 ?>
-
-  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
-    <td class="dataTableContent"><?php echo $file2 . '/' . $file3; ?></td>
-    <td class="dataTableContent"><?php echo substr($method, 7); ?></td>
-  </tr>
-
+			<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
+				<td class="dataTableContent"><?php echo $file2 . '/' . $file3; ?></td>
+				<td class="dataTableContent"><?php echo substr($method, 7); ?></td>
+			</tr>
 <?php
                         }
                       }
@@ -77,11 +74,12 @@
   }
 ?>
 
-</table>
-
-<p class="smallText"><?php echo TEXT_HOOKS_DIRECTORY . ' ' . DIR_FS_CATALOG . 'includes/hooks/'; ?></p>
-
+		</table>
+		<span class="text-muted"><?php echo TEXT_HOOKS_DIRECTORY . ' ' . DIR_FS_CATALOG . 'includes/hooks/'; ?></span>
+	</div>
 <?php
+  echo '</div>';//row end
+
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

@@ -55,36 +55,34 @@
 
   require('includes/template_top.php');
 ?>
+<div class="page-header">
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">
+		<div class="float-left">
+<?php 
+	echo tep_draw_form('year', 'banner_statistics.php', '', 'get', 'class="form-inline"');
+	echo ' ' . TITLE_TYPE . ' ' . tep_draw_pull_down_menu('type', $type_array, (tep_not_null($type) ? $type : 'daily'), 'onchange="this.form.submit();"');
+  
+	switch ($type) {
+		case 'yearly': break;
+		case 'monthly':
+			echo ' ' . TITLE_YEAR . ' ' . tep_draw_pull_down_menu('year', $years_array, (isset($_GET['year']) ? $_GET['year'] : date('Y')), 'onchange="this.form.submit();"');
+		break;
+		default:
+		case 'daily':
+			echo ' ' . TITLE_MONTH . ' ' . tep_draw_pull_down_menu('month', $months_array, (isset($_GET['month']) ? $_GET['month'] : date('n')), 'onchange="this.form.submit();"') . ' ' . TITLE_YEAR . ' ' . tep_draw_pull_down_menu('year', $years_array, (isset($_GET['year']) ? $_GET['year'] : date('Y')), 'onchange="this.form.submit();"');
+		break;
+	}
+	echo '<noscript><input type="submit" value="GO"></noscript>';
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr><?php echo tep_draw_form('year', 'banner_statistics.php', '', 'get'); ?>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', '1', HEADING_IMAGE_HEIGHT); ?></td>
-            <td class="main" align="right"><?php echo TITLE_TYPE . ' ' . tep_draw_pull_down_menu('type', $type_array, (tep_not_null($type) ? $type : 'daily'), 'onchange="this.form.submit();"'); ?><noscript><input type="submit" value="GO"></noscript><br />
-<?php
-  switch ($type) {
-    case 'yearly': break;
-    case 'monthly':
-      echo TITLE_YEAR . ' ' . tep_draw_pull_down_menu('year', $years_array, (isset($_GET['year']) ? $_GET['year'] : date('Y')), 'onchange="this.form.submit();"') . '<noscript><input type="submit" value="GO"></noscript>';
-      break;
-    default:
-    case 'daily':
-      echo TITLE_MONTH . ' ' . tep_draw_pull_down_menu('month', $months_array, (isset($_GET['month']) ? $_GET['month'] : date('n')), 'onchange="this.form.submit();"') . '<noscript><input type="submit" value="GO"></noscript><br />' . TITLE_YEAR . ' ' . tep_draw_pull_down_menu('year', $years_array, (isset($_GET['year']) ? $_GET['year'] : date('Y')), 'onchange="this.form.submit();"') . '<noscript><input type="submit" value="GO"></noscript>';
-      break;
-  }
 ?>
-            </td>
-          <?php echo tep_draw_hidden_field('page', $_GET['page']) . tep_draw_hidden_field('bID', $_GET['bID']) . tep_hide_session_id(); ?></form></tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-      </tr>
-      <tr>
-        <td align="center">
-<?php
+		</div>
+<?php 
+echo tep_draw_hidden_field('page', $_GET['page']) . tep_draw_hidden_field('bID', $_GET['bID']) . tep_hide_session_id();
+echo '</form>';
+
   if (function_exists('imagecreate') && ($dir_ok == true) && tep_not_null($banner_extension)) {
     $banner_id = (int)$_GET['bID'];
 
@@ -104,22 +102,24 @@
         break;
     }
 ?>
-          <table border="0" width="600" cellspacing="0" cellpadding="2">
-            <tr class="dataTableHeadingRow">
-             <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_SOURCE; ?></td>
-             <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_VIEWS; ?></td>
-             <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_CLICKS; ?></td>
-           </tr>
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_SOURCE; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_VIEWS; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_CLICKS; ?></th>
+				</tr>
+			</thead>
 <?php
     for ($i=0, $n=sizeof($stats); $i<$n; $i++) {
-      echo '            <tr class="dataTableRow">' . "\n" .
-           '              <td class="dataTableContent">' . $stats[$i][0] . '</td>' . "\n" .
-           '              <td class="dataTableContent" align="right">' . number_format($stats[$i][1]) . '</td>' . "\n" .
-           '              <td class="dataTableContent" align="right">' . number_format($stats[$i][2]) . '</td>' . "\n" .
-           '            </tr>' . "\n";
+      echo '<tr class="dataTableRow">' . "\n" .
+           '	<td class="dataTableContent">' . $stats[$i][0] . '</td>' . "\n" .
+           '	<td class="dataTableContent" align="right">' . number_format($stats[$i][1]) . '</td>' . "\n" .
+           '	<td class="dataTableContent" align="right">' . number_format($stats[$i][2]) . '</td>' . "\n" .
+           '</tr>' . "\n";
     }
 ?>
-          </table>
+		</table>
 <?php
   } else {
     include('includes/functions/html_graphs.php');
@@ -138,17 +138,14 @@
     }
   }
 ?>
-        </td>
-      </tr>
-      <tr>
-        <td><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-      </tr>
-      <tr>
-        <td class="smallText" align="right"><?php echo tep_draw_button(IMAGE_BACK, 'arrow-1-w', tep_href_link('banner_manager.php', 'page=' . $_GET['page'] . '&bID=' . $_GET['bID'])); ?></td>
-      </tr>
-    </table>
-
+		<nav>
+			<ul class="float-right"><?php echo tep_draw_button(IMAGE_BACK, 'arrow-1-w', tep_href_link('banner_manager.php', 'page=' . $_GET['page'] . '&bID=' . $_GET['bID'])); ?></ul>
+		</nav>
+	</div>
 <?php
+
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

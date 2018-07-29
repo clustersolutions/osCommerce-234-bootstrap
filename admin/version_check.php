@@ -69,76 +69,60 @@
 
     if (!empty($new_versions)) {
       $check_message = array('class' => 'secWarning',
-                             'message' => sprintf(VERSION_UPGRADES_AVAILABLE, $new_versions[0][0]));
+                             'message' => '<div class="alert alert-warning">' . sprintf(VERSION_UPGRADES_AVAILABLE, $new_versions[0][0]) . '</div>');
     } else {
       $check_message = array('class' => 'secSuccess',
-                             'message' => VERSION_RUNNING_LATEST);
+                             'message' => '<div class="alert alert-success">' . VERSION_RUNNING_LATEST . '</div>');
     }
   } else {
     $check_message = array('class' => 'secError',
-                           'message' => ERROR_COULD_NOT_CONNECT);
+                           'message' => '<div class="alert alert-danger">' . ERROR_COULD_NOT_CONNECT . '</div>');
   }
 
   require('includes/template_top.php');
 ?>
+<div class="page-header">	
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">	
+		<div class="alert alert-info"><?php echo TITLE_INSTALLED_VERSION . ' <strong>osCommerce Online Merchant v' . $current_version . '</strong>'; ?></div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td class="smallText"><?php echo TITLE_INSTALLED_VERSION . ' <strong>osCommerce Online Merchant v' . $current_version . '</strong>'; ?></td>
-      </tr>
-      <tr>
-        <td><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-      </tr>
-      <tr>
-        <td><div class="<?php echo $check_message['class']; ?>">
-          <p class="smallText"><?php echo $check_message['message']; ?></p>
-        </div></td>
-      </tr>
-      <tr>
-        <td><?php echo tep_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
-      </tr>
+		<div class="<?php echo $check_message['class']; ?>">
+			<?php echo $check_message['message']; ?>
+		</div>
 <?php
   if (!empty($new_versions)) {
 ?>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_VERSION; ?></td>
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_RELEASED; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_VERSION; ?></th>
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_RELEASED; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+				</tr>
+			</thead>
 
 <?php
     foreach ($new_versions as $version) {
 ?>
-              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
+			<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
                 <td class="dataTableContent"><?php echo '<a href="' . $version[2] . '" target="_blank">osCommerce Online Merchant v' . $version[0] . '</a>'; ?></td>
                 <td class="dataTableContent"><?php echo tep_date_long(substr($version[1], 0, 4) . '-' . substr($version[1], 4, 2) . '-' . substr($version[1], 6, 2)); ?></td>
                 <td class="dataTableContent" align="right"><?php echo '<a href="' . $version[2] . '" target="_blank">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; ?>&nbsp;</td>
-              </tr>
+			</tr>
 <?php
     }
 ?>
-            </table></rd>
-          </tr>
-        </table></td>
-      </tr>
+		</table>
 <?php
   }
 ?>
-    </table>
-
+	</div>
 <?php
+
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

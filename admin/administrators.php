@@ -232,32 +232,25 @@
 
   require('includes/template_top.php');
 ?>
-
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td>
+<div class="page-header">
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-12">
 <?php
-  echo $secMessageStack->output();
+		echo $secMessageStack->output();
 ?>
-        </td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_ADMINISTRATORS; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_HTPASSWD; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+	</div>
+
+	<div class="col-md-8">
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_ADMINISTRATORS; ?></th>
+					<th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_HTPASSWD; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+				</tr>
+			</thead>
 <?php
   $admins_query = tep_db_query("select id, user_name from " . TABLE_ADMINISTRATORS . " order by user_name");
   while ($admins = tep_db_fetch_array($admins_query)) {
@@ -284,22 +277,23 @@
     }
 
     if ( (isset($aInfo) && is_object($aInfo)) && ($admins['id'] == $aInfo->id) ) {
-      echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('administrators.php', 'aID=' . $aInfo->id . '&action=edit') . '\'">' . "\n";
+      echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('administrators.php', 'aID=' . $aInfo->id . '&action=edit') . '\'">' . "\n";
     } else {
-      echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('administrators.php', 'aID=' . $admins['id']) . '\'">' . "\n";
+      echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('administrators.php', 'aID=' . $admins['id']) . '\'">' . "\n";
     }
 ?>
-                <td class="dataTableContent"><?php echo $admins['user_name']; ?></td>
-                <td class="dataTableContent" align="center"><?php echo $htpasswd_secured; ?></td>
-                <td class="dataTableContent" align="right"><?php if ( (isset($aInfo) && is_object($aInfo)) && ($admins['id'] == $aInfo->id) ) { echo tep_image('images/icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link('administrators.php', 'aID=' . $admins['id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-              </tr>
+				<td class="dataTableContent"><?php echo $admins['user_name']; ?></td>
+				<td class="dataTableContent" align="center"><?php echo $htpasswd_secured; ?></td>
+				<td class="dataTableContent" align="right"><?php if ( (isset($aInfo) && is_object($aInfo)) && ($admins['id'] == $aInfo->id) ) { echo tep_image('images/icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link('administrators.php', 'aID=' . $admins['id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+			</tr>
 <?php
   }
 ?>
-              <tr>
-                <td class="smallText" colspan="3" align="right"><?php echo tep_draw_button(IMAGE_INSERT, 'plus', tep_href_link('administrators.php', 'action=new')); ?></td>
-              </tr>
-            </table></td>
+		</table>
+		<nav>
+			<ul class="float-right"><?php echo tep_draw_button(IMAGE_INSERT, 'plus', tep_href_link('administrators.php', 'action=new')); ?></ul>
+		</nav>
+	</div>
 <?php
   $heading = array();
   $contents = array();
@@ -361,21 +355,17 @@
       break;
   }
 
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
-  }
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
+		echo '</div>' . "\n";
+	}
+  
+  echo '</div>';//row end
 
-<?php
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

@@ -328,25 +328,18 @@
   require('includes/template_top.php');
 ?>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_TITLE; ?></td>
-                <td class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_FILE_DATE; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_FILE_SIZE; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+<div class="row">
+	<div class="col-md-8">
+
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_TITLE; ?></th>
+					<th class="dataTableHeadingContent" align="center"><?php echo TABLE_HEADING_FILE_DATE; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_FILE_SIZE; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+				</tr>
+			</thead>
 <?php
   if ($dir_ok == true) {
     $dir = dir(DIR_FS_BACKUP);
@@ -377,10 +370,10 @@
       }
 
       if (isset($buInfo) && is_object($buInfo) && ($entry == $buInfo->file)) {
-        echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
+        echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
         $onclick_link = 'file=' . $buInfo->file . '&action=restore';
       } else {
-        echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
+        echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
         $onclick_link = 'file=' . $entry;
       }
 ?>
@@ -388,26 +381,25 @@
                 <td class="dataTableContent" align="center" onclick="document.location.href='<?php echo tep_href_link('backup.php', $onclick_link); ?>'"><?php echo date(PHP_DATE_TIME_FORMAT, filemtime(DIR_FS_BACKUP . $entry)); ?></td>
                 <td class="dataTableContent" align="right" onclick="document.location.href='<?php echo tep_href_link('backup.php', $onclick_link); ?>'"><?php echo number_format(filesize(DIR_FS_BACKUP . $entry)); ?> bytes</td>
                 <td class="dataTableContent" align="right"><?php if (isset($buInfo) && is_object($buInfo) && ($entry == $buInfo->file)) { echo tep_image('images/icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link('backup.php', 'file=' . $entry) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-              </tr>
+			</tr>
 <?php
     }
     $dir->close();
   }
 ?>
-              <tr>
-                <td class="smallText" colspan="3"><?php echo TEXT_BACKUP_DIRECTORY . ' ' . DIR_FS_BACKUP; ?></td>
-                <td align="right" class="smallText"><?php if ( ($action != 'backup') && (isset($dir)) ) echo tep_draw_button(IMAGE_BACKUP, 'copy', tep_href_link('backup.php', 'action=backup')); if ( ($action != 'restorelocal') && isset($dir) ) echo tep_draw_button(IMAGE_RESTORE, 'arrowrefresh-1-w', tep_href_link('backup.php', 'action=restorelocal')); ?></td>
-              </tr>
+		</table>
+		<nav>
+			<ul class="pagination float-left"><?php echo TEXT_BACKUP_DIRECTORY . ' ' . DIR_FS_BACKUP; ?></ul>
+            <ul class="pagination float-right"><?php if ( ($action != 'backup') && (isset($dir)) ) echo tep_draw_button(IMAGE_BACKUP, 'copy', tep_href_link('backup.php', 'action=backup')); if ( ($action != 'restorelocal') && isset($dir) ) echo tep_draw_button(IMAGE_RESTORE, 'arrowrefresh-1-w', tep_href_link('backup.php', 'action=restorelocal')); ?></ul>
 <?php
   if (defined('DB_LAST_RESTORE')) {
 ?>
-              <tr>
-                <td class="smallText" colspan="4"><?php echo TEXT_LAST_RESTORATION . ' ' . DB_LAST_RESTORE . ' <a href="' . tep_href_link('backup.php', 'action=forget') . '">' . TEXT_FORGET . '</a>'; ?></td>
-              </tr>
+<ul class="pagination float-left"><?php echo TEXT_LAST_RESTORATION . ' ' . DB_LAST_RESTORE . ' <a href="' . tep_href_link('backup.php', 'action=forget') . '">' . TEXT_FORGET . '</a>'; ?></ul>
 <?php
   }
 ?>
-            </table></td>
+		</nav>
+	</div>
 <?php
   $heading = array();
   $contents = array();
@@ -466,21 +458,17 @@
       break;
   }
 
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
-  }
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
-
-<?php
+		echo '</div>' . "\n";
+	}
+  
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

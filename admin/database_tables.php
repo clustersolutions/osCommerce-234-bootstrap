@@ -194,29 +194,33 @@
 
   require('includes/template_top.php');
 ?>
-
-<?php
+<div class="page-header">
+<?php	
   if ( isset($action) ) {
-    echo '<div style="float: right;">' . tep_draw_button(IMAGE_BACK, 'triangle-1-w', tep_href_link('database_tables.php')) . '</div>';
-  }
 ?>
-
-<h1 class="pageHeading"><?php echo HEADING_TITLE; ?></h1>
-
+	<div class="float-right"><?php echo tep_draw_button(IMAGE_BACK, 'triangle-1-w', tep_href_link('database_tables.php')); ?></div>
+<?php
+	}
+?>	
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
+	<div class="col-md-8">
+	
 <?php
   echo tep_draw_form('sql', 'database_tables.php');
 ?>
 
-<table border="0" width="100%" cellspacing="0" cellpadding="2">
-  <tr class="dataTableHeadingRow">
-
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
 <?php
   foreach ( $table_headers as $th ) {
-    echo '    <td class="dataTableHeadingContent">' . $th . '</td>' . "\n";
+    echo '<th class="dataTableHeadingContent">' . $th . '</th>' . "\n";
   }
 ?>
-  </tr>
-
+				</tr>
+			</thead>
 <?php
   foreach ( $table_data as $td ) {
     echo '  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
@@ -228,9 +232,7 @@
     echo '  </tr>' . "\n";
   }
 ?>
-
-</table>
-
+		</table>
 <?php
   if ( !isset($_POST['dryrun']) ) {
 ?>
@@ -244,6 +246,7 @@
 ?>
 
 </form>
+	</div>
 
 <script type="text/javascript">
 $(function() {
@@ -270,6 +273,9 @@ $(function() {
 </script>
 
 <?php
+  
+  echo '</div>';//row end
+  
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>

@@ -32,7 +32,7 @@
         array_shift($contents);
       }
 
-      $tableBox_string .= '<table border="' . $this->table_border . '" width="' . $this->table_width . '" cellspacing="' . $this->table_cellspacing . '" cellpadding="' . $this->table_cellpadding . '"';
+      $tableBox_string .= '<table class="table table-bordered"';
       if (tep_not_null($this->table_parameters)) $tableBox_string .= ' ' . $this->table_parameters;
       $tableBox_string .= '>' . "\n";
 
@@ -79,5 +79,24 @@
 
       return $tableBox_string;
     }
+	
+    function alertBlock($contents) {
+	  $alertBox_string = '';
+		  
+      for ($i=0, $n=sizeof($contents); $i<$n; $i++) {
+        $alertBox_string .= '  <div';
+		  
+        if (isset($contents[$i]['params']) && tep_not_null($contents[$i]['params']))
+		  $alertBox_string .= ' ' . $contents[$i]['params'];
+        
+		  $alertBox_string .= '>' . "\n";
+          $alertBox_string .= '	<button type="button" class="close" data-dismiss="alert">&times;</button>' . "\n";
+          $alertBox_string .= $contents[$i]['text'];
+    
+          $alertBox_string .= '  </div>' . "\n";
+      }
+
+        return $alertBox_string;
+     }	
   }
 ?>

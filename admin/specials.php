@@ -76,16 +76,17 @@
 
   require('includes/template_top.php');
 ?>
-
-    <table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-            <td class="pageHeading" align="right"><?php echo tep_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-          </tr>
-        </table></td>
-      </tr>
+<div class="page-header">
+<?php
+  if (empty($action)) {
+?>
+		<div class="float-right"><?php echo tep_draw_button(IMAGE_NEW_PRODUCT, 'plus', tep_href_link('specials.php', 'page=' . $_GET['page'] . '&action=new')); ?></div>
+<?php
+  }
+?>
+	<h1><?php echo HEADING_TITLE; ?></h1>
+</div>
+<div class="row">
 <?php
   if ( ($action == 'new') || ($action == 'edit') ) {
     $form_action = 'insert';
@@ -108,51 +109,46 @@
       }
     }
 ?>
-      <tr><form name="new_special" <?php echo 'action="' . tep_href_link('specials.php', tep_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action) . '"'; ?> method="post"><?php if ($form_action == 'update') echo tep_draw_hidden_field('specials_id', $_GET['sID']); ?>
-        <td><br /><table border="0" cellspacing="0" cellpadding="2">
-          <tr>
-            <td class="main"><?php echo TEXT_SPECIALS_PRODUCT; ?>&nbsp;</td>
-            <td class="main"><?php echo (isset($sInfo->products_name)) ? $sInfo->products_name . ' <small>(' . $currencies->format($sInfo->products_price) . ')</small>' : tep_draw_products_pull_down('products_id', 'style="font-size:10px"', $specials_array); echo tep_draw_hidden_field('products_price', (isset($sInfo->products_price) ? $sInfo->products_price : '')); ?></td>
-          </tr>
-          <tr>
-            <td class="main"><?php echo TEXT_SPECIALS_SPECIAL_PRICE; ?>&nbsp;</td>
-            <td class="main"><?php echo tep_draw_input_field('specials_price', (isset($sInfo->specials_new_products_price) ? $sInfo->specials_new_products_price : '')); ?></td>
-          </tr>
-          <tr>
-            <td class="main"><?php echo TEXT_SPECIALS_EXPIRES_DATE; ?>&nbsp;</td>
-            <td class="main"><?php echo tep_draw_input_field('expdate', (tep_not_null($sInfo->expires_date) ? substr($sInfo->expires_date, 0, 4) . '-' . substr($sInfo->expires_date, 5, 2) . '-' . substr($sInfo->expires_date, 8, 2) : ''), 'id="expdate"') . ' <small>(YYYY-MM-DD)</small>'; ?></td>
-          </tr>
-        </table>
-
+	<div class="col-md-8">	
+		<form name="new_special" <?php echo 'action="' . tep_href_link('specials.php', tep_get_all_get_params(array('action', 'info', 'sID')) . 'action=' . $form_action) . '"'; ?> method="post"><?php if ($form_action == 'update') echo tep_draw_hidden_field('specials_id', $_GET['sID']); ?>
+			<table class="table table-bordered table-striped table-hover">
+				<tr>
+					<td class="main"><?php echo TEXT_SPECIALS_PRODUCT; ?>&nbsp;</td>
+					<td class="main"><?php echo (isset($sInfo->products_name)) ? $sInfo->products_name . ' <small>(' . $currencies->format($sInfo->products_price) . ')</small>' : tep_draw_products_pull_down('products_id', 'style="font-size:10px"', $specials_array); echo tep_draw_hidden_field('products_price', (isset($sInfo->products_price) ? $sInfo->products_price : '')); ?></td>
+				</tr>
+				<tr>
+					<td class="main"><?php echo TEXT_SPECIALS_SPECIAL_PRICE; ?>&nbsp;</td>
+					<td class="main"><?php echo tep_draw_input_field('specials_price', (isset($sInfo->specials_new_products_price) ? $sInfo->specials_new_products_price : '')); ?></td>
+				</tr>
+				<tr>
+					<td class="main"><?php echo TEXT_SPECIALS_EXPIRES_DATE; ?>&nbsp;</td>
+					<td class="main"><?php echo tep_draw_input_field('expdate', (tep_not_null($sInfo->expires_date) ? substr($sInfo->expires_date, 0, 4) . '-' . substr($sInfo->expires_date, 5, 2) . '-' . substr($sInfo->expires_date, 8, 2) : ''), 'id="expdate"') . ' <small>(YYYY-MM-DD)</small>'; ?></td>
+				</tr>
 <script type="text/javascript">
 $('#expdate').datepicker({
   dateFormat: 'yy-mm-dd'
 });
 </script>
-
-        </td>
-      </tr>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="2">
-          <tr>
-            <td class="main"><br /><?php echo TEXT_SPECIALS_PRICE_TIP; ?></td>
-            <td class="smallText" align="right" valign="top"><br /><?php echo tep_draw_button(IMAGE_SAVE, 'disk', null, 'primary') . tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('specials.php', 'page=' . $_GET['page'] . (isset($_GET['sID']) ? '&sID=' . $_GET['sID'] : ''))); ?></td>
-          </tr>
-        </table></td>
-      </form></tr>
+			</table>
+			<div class="alert alert-info"><?php echo TEXT_SPECIALS_PRICE_TIP; ?></div>
+			<nav>
+				<ul class="float-right"><?php echo tep_draw_button(IMAGE_SAVE, 'disk', null, 'primary') . ' ' . tep_draw_button(IMAGE_CANCEL, 'close', tep_href_link('specials.php', 'page=' . $_GET['page'] . (isset($_GET['sID']) ? '&sID=' . $_GET['sID'] : ''))); ?></ul>
+			</nav>
+		</form>
+	</div>
 <?php
   } else {
 ?>
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-          <tr>
-            <td valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-              <tr class="dataTableHeadingRow">
-                <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRODUCTS_PRICE; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STATUS; ?></td>
-                <td class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-              </tr>
+	<div class="col-md-8">	
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr class="dataTableHeadingRow">
+					<th class="dataTableHeadingContent"><?php echo TABLE_HEADING_PRODUCTS; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_PRODUCTS_PRICE; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_STATUS; ?></th>
+					<th class="dataTableHeadingContent" align="right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</th>
+				</tr>
+			</thead>
 <?php
     $specials_query_raw = "select p.products_id, pd.products_name, p.products_price, s.specials_id, s.specials_new_products_price, s.specials_date_added, s.specials_last_modified, s.expires_date, s.date_status_change, s.status from " . TABLE_PRODUCTS . " p, " . TABLE_SPECIALS . " s, " . TABLE_PRODUCTS_DESCRIPTION . " pd where p.products_id = pd.products_id and pd.language_id = '" . (int)$languages_id . "' and p.products_id = s.products_id order by pd.products_name";
     $specials_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $specials_query_raw, $specials_query_numrows);
@@ -166,9 +162,9 @@ $('#expdate').datepicker({
       }
 
       if (isset($sInfo) && is_object($sInfo) && ($specials['specials_id'] == $sInfo->specials_id)) {
-        echo '                  <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('specials.php', 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=edit') . '\'">' . "\n";
+        echo '<tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('specials.php', 'page=' . $_GET['page'] . '&sID=' . $sInfo->specials_id . '&action=edit') . '\'">' . "\n";
       } else {
-        echo '                  <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('specials.php', 'page=' . $_GET['page'] . '&sID=' . $specials['specials_id']) . '\'">' . "\n";
+        echo '<tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . tep_href_link('specials.php', 'page=' . $_GET['page'] . '&sID=' . $specials['specials_id']) . '\'">' . "\n";
       }
 ?>
                 <td  class="dataTableContent"><?php echo $specials['products_name']; ?></td>
@@ -180,30 +176,19 @@ $('#expdate').datepicker({
       } else {
         echo '<a href="' . tep_href_link('specials.php', 'action=setflag&flag=1&id=' . $specials['specials_id']) . '">' . tep_image('images/icon_status_green_light.gif', IMAGE_ICON_STATUS_GREEN_LIGHT, 10, 10) . '</a>&nbsp;&nbsp;' . tep_image('images/icon_status_red.gif', IMAGE_ICON_STATUS_RED, 10, 10);
       }
-?></td>
+?>
+				</td>
                 <td class="dataTableContent" align="right"><?php if (isset($sInfo) && is_object($sInfo) && ($specials['specials_id'] == $sInfo->specials_id)) { echo tep_image('images/icon_arrow_right.gif', ''); } else { echo '<a href="' . tep_href_link('specials.php', 'page=' . $_GET['page'] . '&sID=' . $specials['specials_id']) . '">' . tep_image('images/icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
-      </tr>
+			</tr>
 <?php
     }
 ?>
-              <tr>
-                <td colspan="4"><table border="0" width="100%" cellpadding="0"cellspacing="2">
-                  <tr>
-                    <td class="smallText" valign="top"><?php echo $specials_split->display_count($specials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_SPECIALS); ?></td>
-                    <td class="smallText" align="right"><?php echo $specials_split->display_links($specials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-                  </tr>
-<?php
-  if (empty($action)) {
-?>
-                  <tr>
-                    <td class="smallText" colspan="2" align="right"><?php echo tep_draw_button(IMAGE_NEW_PRODUCT, 'plus', tep_href_link('specials.php', 'page=' . $_GET['page'] . '&action=new')); ?></td>
-                  </tr>
-<?php
-  }
-?>
-                </table></td>
-              </tr>
-            </table></td>
+		</table>
+		<nav>
+			<ul class="pagination float-left"><?php echo $specials_split->display_count($specials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_SPECIALS); ?></ul>
+		    <?php echo $specials_split->display_links($specials_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
+		</nav>
+	</div>
 <?php
   $heading = array();
   $contents = array();
@@ -234,22 +219,17 @@ $('#expdate').datepicker({
       }
       break;
   }
-  if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
-    echo '            <td width="25%" valign="top">' . "\n";
+	if ( (tep_not_null($heading)) && (tep_not_null($contents)) ) {
+		echo '<div class="col-md-4" >' . "\n";
 
-    $box = new box;
-    echo $box->infoBox($heading, $contents);
+		$box = new box;
+		echo $box->infoBox($heading, $contents);
 
-    echo '            </td>' . "\n";
+		echo '</div>' . "\n";
+	}
   }
-}
-?>
-          </tr>
-        </table></td>
-      </tr>
-    </table>
+  echo '</div>';//row end
 
-<?php
   require('includes/template_bottom.php');
   require('includes/application_bottom.php');
 ?>
